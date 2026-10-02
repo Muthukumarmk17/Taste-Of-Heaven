@@ -13,6 +13,7 @@ const LikedRecipe = require("./models/LikedRecipe");
 const Comment = require("./models/Comment");
 
 const app = express();
+app.set("trust proxy", 1);
 
 
 // =====================================================
