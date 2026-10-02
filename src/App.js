@@ -18,6 +18,18 @@ import AdminDashboard from "./components/AdminDashboard";
 
 import "./App.css";
 
+// =====================================================
+// API BASE URL
+// Local development:
+//   http://localhost:5000
+//
+// Production / Vercel:
+//   REACT_APP_API_URL will be set in Vercel
+// =====================================================
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function App() {
   // =====================================================
   // USER STATE
@@ -26,9 +38,7 @@ function App() {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
 
-    return savedUser
-      ? JSON.parse(savedUser)
-      : null;
+    return savedUser ? JSON.parse(savedUser) : null;
   });
 
   // =====================================================
@@ -37,18 +47,14 @@ function App() {
 
   const [recipes, setRecipes] = useState([]);
 
-  const [selectedCuisine, setSelectedCuisine] =
-    useState("");
+  const [selectedCuisine, setSelectedCuisine] = useState("");
 
-  const [selectedRating, setSelectedRating] =
-    useState(null);
+  const [selectedRating, setSelectedRating] = useState(null);
 
   // "Veg" | "Non-veg" | ""
-  const [selectedType, setSelectedType] =
-    useState("");
+  const [selectedType, setSelectedType] = useState("");
 
-  const [searchTerm, setSearchTerm] =
-    useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // =====================================================
   // FETCH RECIPES
@@ -58,20 +64,14 @@ function App() {
 
   const fetchRecipes = () => {
     axios
-      .get("http://localhost:5000/recipes")
+      .get(`${API_BASE_URL}/recipes`)
       .then((response) => {
-        console.log(
-          "Recipes:",
-          response.data
-        );
+        console.log("Recipes:", response.data);
 
         setRecipes(response.data);
       })
       .catch((error) => {
-        console.error(
-          "Error fetching recipes:",
-          error
-        );
+        console.error("Error fetching recipes:", error);
       });
   };
 
@@ -85,10 +85,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem(
-        "user",
-        JSON.stringify(user)
-      );
+      localStorage.setItem("user", JSON.stringify(user));
     } else {
       localStorage.removeItem("user");
     }
@@ -99,17 +96,11 @@ function App() {
   // =====================================================
 
   const handleLogin = (userData) => {
-    console.log(
-      "Logged in user:",
-      userData
-    );
+    console.log("Logged in user:", userData);
 
     setUser(userData);
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify(userData)
-    );
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   // =====================================================
@@ -125,9 +116,7 @@ function App() {
   // CUISINE FILTER
   // =====================================================
 
-  const handleCuisineSelect = (
-    cuisine
-  ) => {
+  const handleCuisineSelect = (cuisine) => {
     setSelectedCuisine(cuisine);
   };
 
@@ -135,9 +124,7 @@ function App() {
   // RATING FILTER
   // =====================================================
 
-  const handleRatingSelect = (
-    rating
-  ) => {
+  const handleRatingSelect = (rating) => {
     setSelectedRating(rating);
   };
 
@@ -162,49 +149,42 @@ function App() {
   // SAVE TO MONGODB
   // =====================================================
 
-  const handleProfilePictureSelect =
-    async (picture) => {
-      if (!user) {
-        return;
-      }
+  const handleProfilePictureSelect = async (picture) => {
+    if (!user) {
+      return;
+    }
 
-      try {
-        const response =
-          await axios.put(
-            "http://localhost:5000/api/users/profile-picture",
-            {
-              email: user.email,
-              profilePicture: picture,
-            }
-          );
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/api/users/profile-picture`,
+        {
+          email: user.email,
+          profilePicture: picture,
+        }
+      );
 
-        const updatedUser =
-          response.data.user;
+      const updatedUser = response.data.user;
 
-        setUser(updatedUser);
+      setUser(updatedUser);
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify(updatedUser)
-        );
+      localStorage.setItem("user", JSON.stringify(updatedUser));
 
-        console.log(
-          "Profile picture updated:",
-          updatedUser.profilePicture
-        );
+      console.log(
+        "Profile picture updated:",
+        updatedUser.profilePicture
+      );
+    } catch (error) {
+      console.error(
+        "Error updating profile picture:",
+        error
+      );
 
-      } catch (error) {
-        console.error(
-          "Error updating profile picture:",
-          error
-        );
-
-        alert(
-          error.response?.data?.error ||
-            "Unable to update profile picture."
-        );
-      }
-    };
+      alert(
+        error.response?.data?.error ||
+          "Unable to update profile picture."
+      );
+    }
+  };
 
   // =====================================================
   // VEG CHECK (from the recipe name)
@@ -225,55 +205,45 @@ function App() {
   // FILTER RECIPES
   // =====================================================
 
-  const filteredRecipes =
-    recipes.filter((recipe) => {
-      const matchesCuisine =
-        selectedCuisine
-          ? recipe.cuisine ===
-            selectedCuisine
-          : true;
+  const filteredRecipes = recipes.filter((recipe) => {
+    const matchesCuisine = selectedCuisine
+      ? recipe.cuisine === selectedCuisine
+      : true;
 
-      let matchesRating = true;
+    let matchesRating = true;
 
-      if (selectedRating === 4) {
-        matchesRating =
-          Number(recipe.rating) >= 4 &&
-          Number(recipe.rating) < 5;
-      }
+    if (selectedRating === 4) {
+      matchesRating =
+        Number(recipe.rating) >= 4 &&
+        Number(recipe.rating) < 5;
+    }
 
-      if (selectedRating === 5) {
-        matchesRating =
-          Number(recipe.rating) === 5;
-      }
+    if (selectedRating === 5) {
+      matchesRating =
+        Number(recipe.rating) === 5;
+    }
 
-      let matchesType = true;
+    let matchesType = true;
 
-      if (selectedType === "Veg") {
-        matchesType = isVegRecipe(
-          recipe.name
-        );
-      }
+    if (selectedType === "Veg") {
+      matchesType = isVegRecipe(recipe.name);
+    }
 
-      if (selectedType === "Non-veg") {
-        matchesType = !isVegRecipe(
-          recipe.name
-        );
-      }
+    if (selectedType === "Non-veg") {
+      matchesType = !isVegRecipe(recipe.name);
+    }
 
-      const matchesSearchTerm =
-        recipe.name
-          ?.toLowerCase()
-          .includes(
-            searchTerm.toLowerCase()
-          );
+    const matchesSearchTerm = recipe.name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
-      return (
-        matchesCuisine &&
-        matchesRating &&
-        matchesType &&
-        matchesSearchTerm
-      );
-    });
+    return (
+      matchesCuisine &&
+      matchesRating &&
+      matchesType &&
+      matchesSearchTerm
+    );
+  });
 
   // =====================================================
   // UI
@@ -290,15 +260,9 @@ function App() {
         <TopBar
           user={user}
           onLogout={handleLogout}
-          onCuisineSelect={
-            handleCuisineSelect
-          }
-          onRatingSelect={
-            handleRatingSelect
-          }
-          onTypeSelect={
-            handleTypeSelect
-          }
+          onCuisineSelect={handleCuisineSelect}
+          onRatingSelect={handleRatingSelect}
+          onTypeSelect={handleTypeSelect}
           onSearch={handleSearch}
         />
 
@@ -319,25 +283,18 @@ function App() {
               element={
                 <div className="recipe-grid">
 
-                  {filteredRecipes.length ===
-                  0 ? (
+                  {filteredRecipes.length === 0 ? (
                     <p>
                       Loading recipes...
                     </p>
                   ) : (
-                    filteredRecipes.map(
-                      (recipe) => (
-                        <RecipePanel
-                          key={
-                            recipe._id
-                          }
-                          recipe={recipe}
-                          isLoggedIn={
-                            !!user
-                          }
-                        />
-                      )
-                    )
+                    filteredRecipes.map((recipe) => (
+                      <RecipePanel
+                        key={recipe._id}
+                        recipe={recipe}
+                        isLoggedIn={!!user}
+                      />
+                    ))
                   )}
 
                 </div>

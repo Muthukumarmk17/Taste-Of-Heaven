@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 
 import axios from "axios";
+import API_BASE_URL from "../api";
 
 import ReviewForm from "./ReviewForm";
 
@@ -130,7 +131,7 @@ function RecipeDetails({
 
         const response =
           await axios.get(
-            "http://localhost:5000/api/likedRecipes",
+            `${API_BASE_URL}/api/likedRecipes`,
             {
               params: {
 
@@ -241,7 +242,7 @@ function RecipeDetails({
 
       const response =
         await axios.post(
-          "http://localhost:5000/api/likedRecipes",
+          `${API_BASE_URL}/api/likedRecipes`,
           {
 
             recipeName:
@@ -342,9 +343,9 @@ function RecipeDetails({
 
           const response =
             await axios.get(
-              `http://localhost:5000/api/reviews?recipeName=${encodeURIComponent(
-                recipe.name
-              )}`
+              `${API_BASE_URL}/api/reviews?recipeName=${encodeURIComponent(
+  recipe.name
+)}`
             );
 
 
@@ -542,7 +543,7 @@ function RecipeDetails({
 
       if (isAdmin) {
         await axios.delete(
-          `http://localhost:5000/api/admin/reviews/${reviewId}`,
+          `${API_BASE_URL}/api/admin/reviews/${reviewId}`,
           {
             headers: {
               "user-email": currentUser.email,
@@ -551,7 +552,7 @@ function RecipeDetails({
         );
       } else {
         await axios.delete(
-          `http://localhost:5000/api/reviews/${reviewId}`,
+          `${API_BASE_URL}/api/reviews/${reviewId}`,
           {
             data: {
               email: currentUser.email,

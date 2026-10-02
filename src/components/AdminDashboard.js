@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDisplay, faBrain } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../api";
 
 import "./AdminDashboard.css";
 
-const API = "http://localhost:5000";
+const API = API_BASE_URL;
 
 const EMPTY_RECIPE_FORM = {
   name: "",

@@ -4,6 +4,7 @@ import React, {
 } from "react";
 
 import axios from "axios";
+import API_BASE_URL from "../api";
 
 import {
   Link,
@@ -107,7 +108,7 @@ const SignIn = ({ onLogin }) => {
 
       const response =
         await axios.get(
-          "http://localhost:5000/api/auth/google/success",
+          `${API_BASE_URL}/api/auth/google/success`,
           {
             withCredentials: true,
           }
@@ -232,7 +233,7 @@ const SignIn = ({ onLogin }) => {
 
       const response =
         await axios.post(
-          "http://localhost:5000/api/login",
+          `${API_BASE_URL}/api/login`,
           {
             email:
               email
@@ -316,7 +317,7 @@ const SignIn = ({ onLogin }) => {
 
 
     window.location.href =
-      "http://localhost:5000/api/auth/google";
+      `${API_BASE_URL}/api/auth/google`;
 
   };
 

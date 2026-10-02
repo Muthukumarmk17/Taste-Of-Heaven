@@ -13,6 +13,7 @@ import {
 import { Link } from "react-router-dom";
 
 import axios from "axios";
+import API_BASE_URL from "../api";
 
 import LikeAnimation from "./LikeAnimation";
 
@@ -191,7 +192,7 @@ function RecipePanel({ recipe, isLoggedIn, selectedType = "" }) {
       try {
 
         const response = await axios.get(
-          "http://localhost:5000/api/likedRecipes",
+          `${API_BASE_URL}/api/likedRecipes`,
           {
             params: {
 
@@ -249,7 +250,7 @@ function RecipePanel({ recipe, isLoggedIn, selectedType = "" }) {
 
 
         const response = await axios.get(
-          "http://localhost:5000/api/reviewAnalyses",
+          `${API_BASE_URL}/api/reviewAnalyses`,
           {
             params: {
               recipeName:
@@ -414,7 +415,7 @@ function RecipePanel({ recipe, isLoggedIn, selectedType = "" }) {
 
       const response =
         await axios.post(
-          "http://localhost:5000/api/likedRecipes",
+          `${API_BASE_URL}/api/likedRecipes`,
           {
             recipeName:
               recipe.name,

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
+import API_BASE_URL from "../api";
 
 function ProfilePage({
   user,
@@ -57,7 +58,7 @@ function ProfilePage({
       setLoadingLikes(true);
 
       const response = await axios.get(
-        "http://localhost:5000/api/likedRecipes",
+        `${API_BASE_URL}/api/likedRecipes`,
         {
           params: {
             username: currentUser.username,
@@ -98,7 +99,7 @@ function ProfilePage({
       setLoadingReviews(true);
 
       const response = await axios.get(
-        "http://localhost:5000/api/reviews",
+        `${API_BASE_URL}/api/reviews`,
         {
           params: {
             email: currentUser.email,

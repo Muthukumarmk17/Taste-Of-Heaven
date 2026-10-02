@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../api";
 import "./ReviewForm.css";
 
 function ReviewForm({
@@ -63,7 +64,7 @@ function ReviewForm({
 
       // POST review to backend
       const response = await axios.post(
-        "http://localhost:5000/api/reviews",
+        `${API_BASE_URL}/api/reviews`,
         reviewData
       );
 
