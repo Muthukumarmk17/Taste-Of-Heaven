@@ -1,0 +1,23 @@
+/* StarRating.css */
+
+.star-rating {
+  display: flex;
+  cursor: pointer;
+}
+
+.star {
+  font-size: 2rem;
+  color: lightgray;
+  /* Default star color */
+  transition: color 0.2s;
+}
+
+.star.filled {
+  color: gold;
+  /* Filled star color */
+}
+
+.star.half-filled {
+  color: gold;
+  /* Half-filled star color */
+}

@@ -1,0 +1,1831 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.recipe-page {
+  min-height: 100vh;
+  width: 100%;
+
+  background: #fffaf3;
+
+  color: #3b2418;
+
+  padding: 22px 18px 50px;
+
+  box-sizing: border-box;
+}
+
+.recipe-container {
+  width: 100%;
+
+  max-width: 1450px;
+
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.recipe-hero {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns: 43% 57%;
+
+  min-height: 330px;
+
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 166, 74, 0.08),
+      transparent 30%
+    ),
+    #fff8ef;
+
+  border: 1px solid #f1ddc5;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 18px rgba(104, 63, 25, 0.08);
+}
+
+
+/* =========================================================
+   DECORATION
+========================================================= */
+
+.recipe-hero::after {
+  content: "🥕   🍴   🥬   🍲   ✦   🥕";
+
+  position: absolute;
+
+  right: 25px;
+
+  bottom: 12px;
+
+  font-size: 25px;
+
+  letter-spacing: 18px;
+
+  opacity: 0.12;
+
+  pointer-events: none;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.hero-image-section {
+  position: relative;
+
+  min-height: 330px;
+
+  overflow: hidden;
+}
+
+.hero-recipe-image {
+  width: 100%;
+
+  height: 100%;
+
+  min-height: 330px;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform 0.5s ease;
+}
+
+.recipe-hero:hover
+.hero-recipe-image {
+  transform: scale(1.02);
+}
+
+
+/* =========================================================
+   VEGETARIAN
+========================================================= */
+
+.vegetarian-badge {
+  position: absolute;
+
+  left: 28px;
+
+  bottom: 18px;
+
+  padding: 9px 18px;
+
+  background: #f58220;
+
+  color: #ffffff;
+
+  border-radius: 25px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 4px 10px
+    rgba(245, 130, 32, 0.3);
+
+  z-index: 3;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.hero-content {
+  position: relative;
+
+  z-index: 2;
+
+  padding: 42px 48px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CUISINE LABEL
+========================================================= */
+
+.cuisine-label {
+  width: fit-content;
+
+  margin-bottom: 12px;
+
+  color: #e96f13;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+}
+
+.cuisine-label::before {
+  content: "—";
+
+  margin-right: 8px;
+}
+
+.cuisine-label::after {
+  content: "—";
+
+  margin-left: 8px;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.hero-content h1 {
+  margin: 0;
+
+  max-width: 650px;
+
+  color: #742c12;
+
+  font-size: clamp(38px, 4vw, 55px);
+
+  line-height: 1.08;
+
+  font-weight: 800;
+
+  letter-spacing: -1px;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.recipe-description {
+  max-width: 650px;
+
+  margin: 17px 0 18px;
+
+  color: #6e625a;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   RATING
+========================================================= */
+
+.rating-row {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 4px;
+}
+
+.big-star {
+  color: #ffad00;
+
+  font-size: 26px;
+}
+
+.big-rating {
+  color: #e86f16;
+
+  font-size: 18px;
+
+  font-weight: 800;
+}
+
+.review-count {
+  color: #5f5853;
+
+  font-size: 13px;
+}
+
+.rating-divider {
+  color: #d9c9b9;
+
+  font-size: 18px;
+
+  margin: 0 5px;
+}
+
+.cuisine-pill {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 7px 14px;
+
+  border-radius: 20px;
+
+  background: #fff1e1;
+
+  color: #df6d12;
+
+  border: 1px solid #f5d4ae;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   FAVORITE / LIKE BUTTON
+========================================================= */
+
+.favorite-button {
+  position: absolute;
+
+  top: 22px;
+
+  right: 24px;
+
+  width: 48px;
+
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 1px solid #f2cfae;
+
+  background: #fffaf4;
+
+  color: #f26b22;
+
+  font-size: 30px;
+
+  font-family: Arial, sans-serif;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  box-shadow:
+    0 4px 12px
+    rgba(90, 51, 18, 0.1);
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.favorite-button:hover {
+  transform: scale(1.1);
+
+  background: #fff0e4;
+
+  box-shadow:
+    0 6px 16px
+    rgba(242, 107, 34, 0.18);
+}
+
+.favorite-button.liked {
+  color: #ff1616;
+
+  background: #fff1ef;
+
+  border-color: #ffb7b2;
+
+  box-shadow:
+    0 5px 16px
+    rgba(255, 22, 22, 0.15);
+}
+
+.favorite-button.liked:hover {
+  color: #e60000;
+
+  background: #ffe6e3;
+
+  transform: scale(1.12);
+}
+
+.favorite-button:active {
+  transform: scale(0.9);
+}
+
+
+/* =========================================================
+   INGREDIENTS + METHOD
+========================================================= */
+
+.recipe-main-grid {
+  display: grid;
+
+  grid-template-columns: 43% 57%;
+
+  gap: 18px;
+
+  margin-top: 18px;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.ingredients-card,
+.method-card {
+  position: relative;
+
+  min-height: 360px;
+
+  padding: 27px 30px;
+
+  background: #ffffff;
+
+  border-radius: 13px;
+
+  border: 1px solid #eee3d8;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 17px
+    rgba(80, 48, 24, 0.06);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADINGS
+========================================================= */
+
+.card-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.heading-icon {
+  font-size: 24px;
+}
+
+.card-heading h2 {
+  margin: 0;
+
+  font-size: 23px;
+
+  font-weight: 800;
+}
+
+.ingredients-heading h2 {
+  color: #3e8d51;
+}
+
+.method-heading h2 {
+  color: #e96f13;
+}
+
+
+/* =========================================================
+   LINES
+========================================================= */
+
+.heading-line {
+  width: 100%;
+
+  height: 1px;
+
+  margin: 11px 0 19px;
+}
+
+.green-line {
+  background:
+    linear-gradient(
+      to right,
+      #66af72,
+      #e5f0e5
+    );
+}
+
+.orange-line {
+  background:
+    linear-gradient(
+      to right,
+      #f18a31,
+      #fce8d5
+    );
+}
+
+.reviews-line {
+  background:
+    linear-gradient(
+      to right,
+      #e1a66d,
+      #f9eee3
+    );
+}
+
+
+/* =========================================================
+   INGREDIENTS
+========================================================= */
+
+.ingredients-list {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  column-gap: 32px;
+
+  row-gap: 13px;
+}
+
+.ingredient-row {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 8px;
+
+  color: #4d4540;
+
+  font-size: 15px;
+
+  line-height: 1.45;
+}
+
+.ingredient-dot {
+  color: #4ca45d;
+
+  font-size: 21px;
+
+  line-height: 14px;
+}
+
+.ingredient-decoration {
+  position: absolute;
+
+  left: 25px;
+
+  bottom: 4px;
+
+  font-size: 40px;
+
+  opacity: 0.12;
+}
+
+
+/* =========================================================
+   METHOD
+========================================================= */
+
+.method-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.method-row {
+  display: grid;
+
+  grid-template-columns: 29px 1fr;
+
+  align-items: start;
+
+  gap: 11px;
+}
+
+.step-circle {
+  width: 27px;
+
+  height: 27px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #f58220;
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 3px 7px
+    rgba(245, 130, 32, 0.22);
+}
+
+.method-row p {
+  margin: 1px 0 0;
+
+  color: #4d4540;
+
+  font-size: 14px;
+
+  line-height: 1.48;
+}
+
+.method-decoration {
+  position: absolute;
+
+  right: 25px;
+
+  bottom: 5px;
+
+  font-size: 50px;
+
+  opacity: 0.08;
+}
+
+
+/* =========================================================
+   REVIEWS
+========================================================= */
+
+.reviews-section {
+  margin-top: 18px;
+
+  padding: 25px 28px 30px;
+
+  background: #ffffff;
+
+  border: 1px solid #eee3d8;
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 5px 17px
+    rgba(80, 48, 24, 0.06);
+
+  box-sizing: border-box;
+}
+
+.reviews-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+}
+
+.reviews-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.reviews-icon {
+  font-size: 26px;
+}
+
+.reviews-heading h2 {
+  margin: 0;
+
+  color: #553524;
+
+  font-size: 24px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   WRITE REVIEW BUTTON
+   SMALLER BREADTH
+========================================================= */
+
+.write-review-button {
+  width: 280px;
+
+  height: 52px;
+
+  border: none;
+
+  padding: 0 20px;
+
+  border-radius: 10px;
+
+  background: #f58220;
+
+  color: #ffffff;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  box-shadow:
+    0 4px 10px
+    rgba(245, 130, 32, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.write-review-button:hover {
+  background: #e66f0e;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 15px
+    rgba(245, 130, 32, 0.30);
+}
+
+.write-review-button:active {
+  transform: scale(0.97);
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+========================================================= */
+
+.success-message {
+  padding: 12px 16px;
+
+  margin: 10px 0 15px;
+
+  border-radius: 7px;
+
+  background: #eef8ef;
+
+  color: #358248;
+
+  border: 1px solid #d0e8d3;
+
+  text-align: center;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   REVIEW GRID
+========================================================= */
+
+.reviews-grid {
+  width: 100%;
+  max-width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+
+  margin-top: 24px;
+
+  align-items: stretch;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   REVIEW CARD
+========================================================= */
+
+.reviews-grid .review-card {
+  position: relative;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  align-items: stretch !important;
+
+  justify-content: flex-start !important;
+
+  padding: 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e7ddd4;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 18px rgba(72, 42, 20, 0.07);
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+.reviews-grid .review-card:hover {
+  transform: translateY(-5px);
+
+  border-color: #f2c49a;
+
+  box-shadow:
+    0 12px 28px rgba(72, 42, 20, 0.12);
+}
+
+
+/* =========================================================
+   REVIEW TOP
+========================================================= */
+
+.reviews-grid .review-card-top {
+  width: 100%;
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  justify-content: space-between !important;
+
+  gap: 14px;
+
+  margin: 0;
+
+  padding: 0;
+
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   REVIEW USER
+========================================================= */
+
+.reviews-grid .review-user {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  gap: 12px;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   REVIEW AVATAR
+========================================================= */
+
+.reviews-grid .review-avatar {
+  width: 54px;
+
+  height: 54px;
+
+  min-width: 54px;
+
+  max-width: 54px;
+
+  flex: 0 0 54px;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  border-radius: 50%;
+
+  border: 3px solid #ffffff;
+
+  color: #ffffff;
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.14);
+
+  box-sizing: border-box;
+}
+
+
+.reviews-grid .avatar-0 {
+  background: #35a853;
+}
+
+.reviews-grid .avatar-1 {
+  background: #f58220;
+}
+
+.reviews-grid .avatar-2 {
+  background: #378bd4;
+}
+
+.reviews-grid .avatar-3 {
+  background: #df5570;
+}
+
+
+/* =========================================================
+   USER INFORMATION
+========================================================= */
+
+.reviews-grid .review-user-info {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+
+.reviews-grid .review-user-info h3 {
+  width: 100%;
+
+  margin: 0 0 4px;
+
+  padding: 0;
+
+  color: #30251f;
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  line-height: 1.25;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.reviews-grid .review-user-info p {
+  width: 100%;
+
+  margin: 0;
+
+  padding: 0;
+
+  color: #8b817a;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   DELETE REVIEW BUTTON
+========================================================= */
+
+.reviews-grid .delete-review-button {
+  width: 40px;
+
+  height: 40px;
+
+  min-width: 40px;
+
+  max-width: 40px;
+
+  flex: 0 0 40px;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: 1px solid #f0caca;
+
+  border-radius: 11px;
+
+  background: #fff6f6;
+
+  color: #d9534f;
+
+  font-size: 15px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.reviews-grid .delete-review-button:hover {
+  background: #d9534f;
+
+  border-color: #d9534f;
+
+  color: #ffffff;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 14px rgba(217, 83, 79, 0.24);
+}
+
+
+.reviews-grid .delete-review-button:active {
+  transform: scale(0.93);
+}
+
+
+/* =========================================================
+   REVIEW RATING
+========================================================= */
+
+.reviews-grid .review-rating-row {
+  width: 100%;
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  justify-content: flex-start !important;
+
+  gap: 9px;
+
+  margin: 20px 0 0;
+
+  padding: 14px 0;
+
+  border-top: 1px solid #f0e7df;
+
+  border-bottom: 1px solid #f0e7df;
+
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   REVIEW STARS
+========================================================= */
+
+.reviews-grid .review-stars {
+  display: inline-flex;
+
+  align-items: center;
+
+  color: #ffae00;
+
+  font-size: 18px;
+
+  letter-spacing: 2px;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+.reviews-grid .empty-review-stars {
+  color: #ded9d3;
+}
+
+
+/* =========================================================
+   REVIEW NUMBER
+========================================================= */
+
+.reviews-grid .review-number {
+  color: #40362f;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   REVIEW COMMENT
+========================================================= */
+
+.reviews-grid .review-text {
+  width: 100%;
+
+  min-height: 60px;
+
+  margin: 17px 0;
+
+  padding: 0;
+
+  color: #554c46;
+
+  font-size: 14px;
+
+  font-weight: 400;
+
+  line-height: 1.7;
+
+  text-align: left;
+
+  word-break: break-word;
+
+  overflow-wrap: anywhere;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   REVIEW DATE
+========================================================= */
+
+.reviews-grid .review-date {
+  width: 100%;
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  justify-content: flex-start !important;
+
+  gap: 7px;
+
+  margin-top: auto;
+
+  padding-top: 13px;
+
+  border-top: 1px solid #eee8e2;
+
+  color: #8c857f;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  line-height: 1.4;
+
+  box-sizing: border-box;
+}
+
+
+.reviews-grid .calendar-icon {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   REVIEW RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .reviews-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+@media (max-width: 850px) {
+
+  .reviews-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+  }
+
+  .reviews-grid .review-card {
+    padding: 20px;
+  }
+
+  .reviews-grid .review-avatar {
+    width: 50px;
+
+    height: 50px;
+
+    min-width: 50px;
+
+    max-width: 50px;
+
+    flex-basis: 50px;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .reviews-grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+  .reviews-grid .review-card {
+    padding: 19px;
+
+    border-radius: 16px;
+  }
+
+  .reviews-grid .review-avatar {
+    width: 48px;
+
+    height: 48px;
+
+    min-width: 48px;
+
+    max-width: 48px;
+
+    flex-basis: 48px;
+
+    font-size: 18px;
+  }
+
+  .reviews-grid .review-user-info h3 {
+    font-size: 15px;
+  }
+
+  .reviews-grid .review-user-info p {
+    font-size: 11px;
+  }
+
+  .reviews-grid .delete-review-button {
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    max-width: 38px;
+
+    flex-basis: 38px;
+  }
+
+  .reviews-grid .review-stars {
+    font-size: 17px;
+  }
+
+  .reviews-grid .review-text {
+    font-size: 13px;
+
+    min-height: 55px;
+  }
+
+}
+
+
+/* =========================================================
+   NO REVIEWS
+========================================================= */
+
+.no-reviews {
+  text-align: center;
+
+  padding: 40px 10px;
+}
+
+.no-reviews-icon {
+  font-size: 38px;
+
+  opacity: 0.65;
+}
+
+.no-reviews h3 {
+  margin: 9px 0 5px;
+
+  color: #e46f15;
+}
+
+.no-reviews p {
+  margin: 0;
+
+  color: #827a74;
+}
+
+
+/* =========================================================
+   NOT FOUND
+========================================================= */
+
+.recipe-not-found {
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: #fffaf3;
+
+  color: #3b2418;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .hero-content {
+    padding: 35px;
+  }
+
+  .hero-content h1 {
+    font-size: 42px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .recipe-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image-section,
+  .hero-recipe-image {
+    min-height: 330px;
+  }
+
+  .hero-content {
+    padding: 32px;
+  }
+
+  .recipe-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .recipe-page {
+    padding: 10px;
+  }
+
+  .recipe-hero {
+    border-radius: 12px;
+  }
+
+  .hero-image-section,
+  .hero-recipe-image {
+    min-height: 260px;
+  }
+
+  .hero-content {
+    padding: 27px 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 34px;
+  }
+
+  .recipe-description {
+    font-size: 14px;
+  }
+
+  .favorite-button {
+    top: 15px;
+
+    right: 15px;
+
+    width: 43px;
+
+    height: 43px;
+  }
+
+  .ingredients-list {
+    grid-template-columns: 1fr;
+  }
+
+  .ingredients-card,
+  .method-card {
+    padding: 22px 18px;
+  }
+
+  .reviews-section {
+    padding: 20px 15px;
+  }
+
+  .reviews-top {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+
+  /* SMALL WRITE REVIEW BUTTON */
+
+  .write-review-button {
+    width: 230px;
+
+    max-width: 100%;
+
+    height: 48px;
+
+    margin: 0 auto;
+  }
+
+}
+
+/* =========================================================
+   DELETE REVIEW CONFIRMATION MODAL
+========================================================= */
+
+.delete-confirm-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(36, 25, 18, 0.58);
+
+  backdrop-filter: blur(5px);
+
+  -webkit-backdrop-filter: blur(5px);
+
+  box-sizing: border-box;
+
+  animation: deleteOverlayIn 0.2s ease;
+}
+
+
+.delete-confirm-modal {
+  width: 100%;
+
+  max-width: 440px;
+
+  padding: 30px;
+
+  background: #ffffff;
+
+  border: 1px solid #eadfd7;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 25px 70px rgba(45, 28, 18, 0.25);
+
+  text-align: center;
+
+  box-sizing: border-box;
+
+  animation: deleteModalIn 0.25s ease;
+}
+
+
+/* =========================================================
+   DELETE ICON
+========================================================= */
+
+.delete-confirm-icon {
+  width: 62px;
+
+  height: 62px;
+
+  margin: 0 auto 17px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fff0f0;
+
+  border: 1px solid #f6caca;
+
+  color: #d9534f;
+
+  font-size: 23px;
+
+  box-shadow:
+    0 5px 15px rgba(217, 83, 79, 0.12);
+}
+
+
+/* =========================================================
+   MODAL TITLE
+========================================================= */
+
+.delete-confirm-modal h3 {
+  margin: 0 0 9px;
+
+  color: #34251e;
+
+  font-size: 22px;
+
+  font-weight: 800;
+
+  line-height: 1.25;
+}
+
+
+.delete-confirm-modal > p {
+  margin: 0 auto 20px;
+
+  color: #776d66;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   REVIEW PREVIEW
+========================================================= */
+
+.delete-confirm-review {
+  width: 100%;
+
+  margin-bottom: 24px;
+
+  padding: 14px 16px;
+
+  background: #fffaf5;
+
+  border: 1px solid #f0e2d5;
+
+  border-radius: 12px;
+
+  text-align: left;
+
+  box-sizing: border-box;
+}
+
+
+.delete-confirm-review strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #4a3428;
+
+  font-size: 14px;
+
+  font-weight: 800;
+}
+
+
+.delete-confirm-review span {
+  display: -webkit-box;
+
+  overflow: hidden;
+
+  color: #766b64;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  word-break: break-word;
+
+  -webkit-box-orient: vertical;
+
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+
+/* =========================================================
+   MODAL BUTTONS
+========================================================= */
+
+.delete-confirm-actions {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+
+  width: 100%;
+}
+
+
+.delete-confirm-actions button {
+  height: 46px;
+
+  border-radius: 11px;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.delete-no-button {
+  border: 1px solid #ded5ce;
+
+  background: #ffffff;
+
+  color: #554a43;
+}
+
+
+.delete-no-button:hover:not(:disabled) {
+  background: #f8f5f2;
+
+  border-color: #cfc3ba;
+
+  transform: translateY(-1px);
+}
+
+
+.delete-yes-button {
+  border: 1px solid #d9534f;
+
+  background: #d9534f;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 12px rgba(217, 83, 79, 0.20);
+}
+
+
+.delete-yes-button:hover:not(:disabled) {
+  background: #c9433f;
+
+  border-color: #c9433f;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 7px 16px rgba(217, 83, 79, 0.28);
+}
+
+
+.delete-confirm-actions button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+
+.delete-confirm-actions button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MODAL ANIMATIONS
+========================================================= */
+
+@keyframes deleteOverlayIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes deleteModalIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(15px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+/* =========================================================
+   DELETE MODAL MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .delete-confirm-overlay {
+    padding: 15px;
+  }
+
+  .delete-confirm-modal {
+    max-width: 100%;
+
+    padding: 25px 20px;
+
+    border-radius: 18px;
+  }
+
+  .delete-confirm-icon {
+    width: 56px;
+
+    height: 56px;
+
+    font-size: 21px;
+  }
+
+  .delete-confirm-modal h3 {
+    font-size: 20px;
+  }
+
+  .delete-confirm-actions button {
+    height: 44px;
+
+    font-size: 13px;
+  }
+
+}

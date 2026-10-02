@@ -1,0 +1,1051 @@
+/* =====================================================
+   RECIPE PANEL CONTAINER
+===================================================== */
+
+.recipe-panel-container {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 20px;
+
+  width: 100%;
+  max-width: 100%;
+
+  padding: 20px 28px;
+
+  margin: 0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+/* =====================================================
+   RECIPE CARD
+===================================================== */
+
+.recipe-panel {
+  width: 100%;
+  min-width: 0;
+
+  padding: 13px;
+
+  background: #ffffff;
+
+  border: 1px solid #eeeeee;
+
+  border-radius: 19px;
+
+  box-shadow:
+    0 5px 18px rgba(40, 50, 40, 0.08);
+
+  position: relative;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  text-align: left;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.recipe-panel:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 25px rgba(40, 50, 40, 0.12);
+}
+
+
+/* =====================================================
+   IMAGE WRAPPER
+===================================================== */
+
+.recipe-image-wrapper {
+  width: 100%;
+
+  height: 220px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 13px;
+
+  background: #f3f3f3;
+}
+
+
+/* =====================================================
+   RECIPE IMAGE
+===================================================== */
+
+.recipe-image-wrapper img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition: transform 0.35s ease;
+}
+
+.recipe-panel:hover
+.recipe-image-wrapper img {
+  transform: scale(1.03);
+}
+
+
+/* =====================================================
+   VEG / NON-VEG BADGE
+===================================================== */
+
+.diet-badge {
+  position: absolute;
+
+  top: 10px;
+  left: 10px;
+
+  z-index: 5;
+
+  min-height: 34px;
+
+  padding: 0 13px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  box-shadow:
+    0 3px 9px rgba(0, 0, 0, 0.12);
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  box-sizing: border-box;
+}
+
+.diet-veg {
+  color: #168b48;
+}
+
+.diet-nonveg {
+  color: #9b3d1f;
+}
+
+
+/* =====================================================
+   HEART BUTTON
+===================================================== */
+
+.recipe-panel .heart-icon {
+  position: absolute;
+
+  top: 9px;
+  right: 9px;
+
+  z-index: 20;
+
+  width: 45px !important;
+  height: 45px !important;
+
+  min-width: 45px !important;
+  max-width: 45px !important;
+
+  min-height: 45px !important;
+  max-height: 45px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: none !important;
+
+  border-radius: 50% !important;
+
+  background: #ffffff !important;
+
+  color: #ff0000 !important;
+
+  box-shadow:
+    0 3px 9px rgba(0, 0, 0, 0.16);
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.recipe-panel .heart-icon svg {
+  width: 23px !important;
+  height: 23px !important;
+
+  display: block !important;
+}
+
+.recipe-panel
+.heart-icon:not(.liked)
+svg {
+  color: #ff0000 !important;
+
+  fill: none !important;
+
+  stroke: #ff0000 !important;
+
+  stroke-width: 2.2 !important;
+}
+
+.recipe-panel
+.heart-icon:not(.liked)
+svg path {
+  fill: none !important;
+
+  stroke: #ff0000 !important;
+
+  stroke-width: 2.2 !important;
+}
+
+.recipe-panel
+.heart-icon.liked
+svg {
+  color: #ff0000 !important;
+
+  fill: #ff0000 !important;
+
+  stroke: #ff0000 !important;
+}
+
+.recipe-panel
+.heart-icon.liked
+svg path {
+  fill: #ff0000 !important;
+
+  stroke: #ff0000 !important;
+}
+
+.recipe-panel
+.heart-icon:hover {
+  transform: scale(1.08);
+
+  box-shadow:
+    0 5px 13px rgba(0, 0, 0, 0.22);
+}
+
+.recipe-panel
+.heart-icon:active {
+  transform: scale(0.93);
+}
+
+.recipe-panel
+.heart-icon:disabled {
+  opacity: 1;
+
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   RECIPE NAME
+===================================================== */
+
+.recipe-name {
+  margin: 13px 6px 7px;
+
+  color: #101010;
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  text-align: left;
+
+  word-break: normal;
+}
+
+
+/* =====================================================
+   CUISINE BADGE
+===================================================== */
+
+.cuisine-badge {
+  width: fit-content;
+
+  max-width: 100%;
+
+  min-height: 33px;
+
+  margin: 0 6px 9px;
+
+  padding: 0 12px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border-radius: 20px;
+
+  background: #f8f0e3;
+
+  color: #211d1a;
+
+  font-size: 13px;
+
+  line-height: 1;
+
+  box-sizing: border-box;
+}
+
+.cuisine-badge svg {
+  color: #8a431d;
+
+  font-size: 14px;
+}
+
+.cuisine-badge strong {
+  color: #7a391a;
+
+  font-weight: 800;
+}
+
+.cuisine-badge span {
+  color: #211d1a;
+
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   RATING ROW
+===================================================== */
+
+.recipe-rating-row {
+  width: 100%;
+
+  min-height: 27px;
+
+  margin: 0 6px 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+.rating-stars {
+  color: #ffb20f;
+
+  font-size: 19px;
+
+  letter-spacing: 0;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+}
+
+.rating-value {
+  color: #171717;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+}
+
+.review-count {
+  color: #6d7480;
+
+  font-size: 12px;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+}
+
+
+/* =====================================================
+   OVERALL REVIEW BOX
+===================================================== */
+
+.overall-review-box {
+  width: 100%;
+
+  min-height: 100px;
+
+  padding: 9px 10px;
+
+  display: grid;
+
+  grid-template-columns:
+    72px minmax(0, 1fr) 100px;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f0f8f1,
+      #f7faf7
+    );
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   PERCENTAGE CIRCLE
+===================================================== */
+
+.review-donut {
+  width: 68px;
+
+  height: 68px;
+
+  position: relative;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    conic-gradient(
+      #269d50 var(--review-percentage),
+      #d9dfdb var(--review-percentage)
+    );
+}
+
+.review-donut::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 7px;
+
+  border-radius: 50%;
+
+  background: #f4f8f4;
+}
+
+.review-donut-inner {
+  position: relative;
+
+  z-index: 1;
+
+  width: 53px;
+
+  height: 53px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #137d3b;
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(38, 157, 80, 0.08);
+}
+
+
+/* =====================================================
+   REVIEW SUMMARY
+===================================================== */
+
+.review-summary {
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+.review-summary-title {
+  margin-bottom: 3px;
+
+  color: #202420;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  white-space: normal;
+}
+
+.review-summary-percentage {
+  margin-bottom: 5px;
+
+  color: #168744;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  white-space: normal;
+}
+
+
+/* =====================================================
+   PROGRESS BAR
+===================================================== */
+
+.review-progress {
+  width: 100%;
+
+  height: 8px;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: #dce1df;
+}
+
+.review-progress-fill {
+  height: 100%;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #279c51,
+      #42b968
+    );
+
+  transition:
+    width 0.6s ease;
+}
+
+
+/* =====================================================
+   REVIEW COUNT
+===================================================== */
+
+.review-count-text {
+  margin-top: 4px;
+
+  color: #727981;
+
+  font-size: 9px;
+
+  line-height: 1.2;
+
+  white-space: normal;
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+.review-feedback {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding-left: 7px;
+
+  border-left: 1px solid #dfe7e1;
+
+  color: #126e35;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  line-height: 1.25;
+
+  overflow: hidden;
+}
+
+.review-smile {
+  width: 30px;
+
+  height: 30px;
+
+  min-width: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 2px solid #299b52;
+
+  border-radius: 50%;
+
+  color: #299b52;
+
+  font-size: 15px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   VIEW DETAILS LINK
+===================================================== */
+
+.view-details-link {
+  width: 100%;
+
+  display: block;
+
+  text-decoration: none;
+}
+
+
+/* =====================================================
+   VIEW DETAILS BUTTON
+===================================================== */
+
+.view-details-button {
+  width: 100%;
+
+  height: 49px;
+
+  min-height: 49px;
+
+  padding: 0 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  border: none;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #24994d,
+      #2da557
+    );
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.view-details-button:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #1f8c46,
+      #27984e
+    );
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 14px
+    rgba(36, 153, 77, 0.25);
+}
+
+.view-details-button:active {
+  transform: scale(0.98);
+}
+
+
+/* =====================================================
+   PREVENT HORIZONTAL SCROLL
+===================================================== */
+
+html,
+body,
+#root {
+  max-width: 100%;
+
+  overflow-x: hidden;
+}
+
+
+/* =====================================================
+   LARGE DESKTOP
+===================================================== */
+
+@media (min-width: 1500px) {
+
+  .recipe-panel-container {
+    gap: 22px;
+
+    padding:
+      22px 30px;
+  }
+
+  .recipe-image-wrapper {
+    height: 225px;
+  }
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1250px) {
+
+  .recipe-panel-container {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    padding:
+      20px;
+  }
+
+  .overall-review-box {
+    grid-template-columns:
+      70px minmax(0, 1fr);
+
+    gap: 8px;
+  }
+
+  .review-feedback {
+    grid-column: 1 / -1;
+
+    padding:
+      6px 0 0;
+
+    border-left: none;
+
+    border-top:
+      1px solid #dfe7e1;
+  }
+}
+
+
+/* =====================================================
+   SMALL TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .recipe-panel-container {
+    grid-template-columns: 1fr;
+
+    max-width: 620px;
+
+    margin: 0 auto;
+
+    padding:
+      18px;
+  }
+
+  .recipe-panel {
+    max-width: 620px;
+
+    margin: 0 auto;
+  }
+
+  .recipe-image-wrapper {
+    height: 260px;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .recipe-panel-container {
+    grid-template-columns: 1fr;
+
+    padding: 14px;
+
+    gap: 16px;
+  }
+
+  .recipe-panel {
+    padding: 12px;
+
+    border-radius: 17px;
+  }
+
+  .recipe-image-wrapper {
+    height: 215px;
+
+    border-radius: 12px;
+  }
+
+  .diet-badge {
+    top: 8px;
+
+    left: 8px;
+
+    min-height: 32px;
+
+    padding: 0 10px;
+
+    font-size: 12px;
+  }
+
+  .recipe-panel .heart-icon {
+    top: 8px;
+
+    right: 8px;
+
+    width: 42px !important;
+    height: 42px !important;
+
+    min-width: 42px !important;
+    max-width: 42px !important;
+
+    min-height: 42px !important;
+    max-height: 42px !important;
+  }
+
+  .recipe-panel .heart-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .recipe-name {
+    margin:
+      12px 3px 7px;
+
+    font-size: 19px;
+  }
+
+  .cuisine-badge {
+    margin-left: 3px;
+
+    min-height: 32px;
+
+    font-size: 12px;
+  }
+
+  .recipe-rating-row {
+    margin-left: 3px;
+
+    gap: 6px;
+  }
+
+  .rating-stars {
+    font-size: 18px;
+  }
+
+  .rating-value {
+    font-size: 15px;
+  }
+
+  .review-count {
+    font-size: 11px;
+  }
+
+  .overall-review-box {
+    grid-template-columns:
+      68px minmax(0, 1fr);
+
+    gap: 9px;
+
+    padding: 10px;
+  }
+
+  .review-donut {
+    width: 66px;
+
+    height: 66px;
+  }
+
+  .review-donut-inner {
+    width: 52px;
+
+    height: 52px;
+
+    font-size: 16px;
+  }
+
+  .review-summary-title {
+    font-size: 11px;
+  }
+
+  .review-summary-percentage {
+    font-size: 11px;
+  }
+
+  .review-count-text {
+    font-size: 9px;
+  }
+
+  .review-feedback {
+    font-size: 11px;
+  }
+
+  .review-smile {
+    width: 30px;
+
+    height: 30px;
+
+    min-width: 30px;
+
+    font-size: 15px;
+  }
+
+  .view-details-button {
+    height: 47px;
+
+    min-height: 47px;
+
+    font-size: 15px;
+  }
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+
+  .recipe-panel-container {
+    padding: 10px;
+  }
+
+  .recipe-panel {
+    padding: 10px;
+  }
+
+  .recipe-image-wrapper {
+    height: 195px;
+  }
+
+  .overall-review-box {
+    grid-template-columns:
+      62px minmax(0, 1fr);
+
+    gap: 7px;
+
+    padding: 8px;
+  }
+
+  .review-donut {
+    width: 60px;
+
+    height: 60px;
+  }
+
+  .review-donut-inner {
+    width: 47px;
+
+    height: 47px;
+
+    font-size: 15px;
+  }
+}
+/* =====================================================
+   ADMIN LIKE DISABLED
+   ===================================================== */
+
+.heart-icon.admin-like-disabled {
+  cursor: not-allowed !important;
+  opacity: 0.45 !important;
+  pointer-events: auto;
+}
+
+
+/* Prevent hover animation for admin */
+
+.heart-icon.admin-like-disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Keep the icon visually disabled */
+
+.heart-icon.admin-like-disabled svg {
+  opacity: 0.7;
+}

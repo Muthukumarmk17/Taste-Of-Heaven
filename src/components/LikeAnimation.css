@@ -1,0 +1,708 @@
+/* =========================================================
+   3D LIKE ANIMATION
+   POLISHED GLOSSY HEART DESIGN
+========================================================= */
+
+.like-animation-overlay {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Dark glass effect */
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 25, 45, 0.10) 0%,
+      rgba(0, 0, 0, 0.38) 45%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 99999;
+
+  pointer-events: none;
+
+  animation:
+    likeOverlayFade
+    1.8s
+    ease
+    forwards;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.like-animation-content {
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 300px;
+  height: 300px;
+
+  transform-style: preserve-3d;
+
+  animation:
+    likeContentPop
+    1.8s
+    cubic-bezier(
+      0.17,
+      0.89,
+      0.32,
+      1.49
+    )
+    forwards;
+}
+
+
+/* =========================================================
+   RED GLOW BEHIND HEART
+========================================================= */
+
+.like-animation-content::before {
+  content: "";
+
+  position: absolute;
+
+  width: 190px;
+  height: 190px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 20, 35, 0.55) 0%,
+      rgba(255, 20, 35, 0.28) 35%,
+      rgba(255, 20, 35, 0.08) 65%,
+      transparent 75%
+    );
+
+  filter: blur(22px);
+
+  z-index: -5;
+
+  animation:
+    heartGlow
+    1.8s
+    ease
+    forwards;
+}
+
+
+/* =========================================================
+   3D HEART
+========================================================= */
+
+.heart-3d {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ff1717;
+
+  font-size: 145px;
+
+  line-height: 1;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-weight: 900;
+
+  transform-style: preserve-3d;
+
+  /*
+    Multiple shadows create the
+    polished 3D appearance.
+  */
+
+  filter:
+
+    /* Deep bottom shadow */
+    drop-shadow(
+      0 20px 8px
+      rgba(0, 0, 0, 0.38)
+    )
+
+    /* Red glow */
+    drop-shadow(
+      0 5px 18px
+      rgba(255, 0, 0, 0.65)
+    )
+
+    /* Outer glow */
+    drop-shadow(
+      0 0 35px
+      rgba(255, 30, 30, 0.45)
+    );
+
+  /*
+    Slight glossy appearance
+  */
+
+  text-shadow:
+
+    /* bright top edge */
+    -3px -4px 0
+    #ff7777,
+
+    /* main depth */
+    3px 5px 0
+    #d40000,
+
+    /* deep depth */
+    6px 9px 0
+    #a50000,
+
+    /* glow */
+    0 0 12px
+    rgba(255, 30, 30, 0.8),
+
+    0 0 25px
+    rgba(255, 20, 20, 0.45);
+
+  animation:
+    heart3DPop
+    1.8s
+    cubic-bezier(
+      0.17,
+      0.89,
+      0.32,
+      1.49
+    )
+    forwards;
+}
+
+
+/* =========================================================
+   DEEP 3D HEART SIDE
+========================================================= */
+
+.heart-3d::before {
+  content: "♥";
+
+  position: absolute;
+
+  top: 8px;
+  left: 8px;
+
+  color: #a90000;
+
+  z-index: -1;
+
+  opacity: 0.9;
+
+  transform:
+    translateZ(-15px);
+
+  filter:
+    blur(0.4px);
+}
+
+
+/* =========================================================
+   HEART LIGHT / GLOSS
+========================================================= */
+
+.heart-3d::after {
+  content: "♥";
+
+  position: absolute;
+
+  top: -3px;
+  left: -3px;
+
+  color: #ff6262;
+
+  z-index: -2;
+
+  opacity: 0.35;
+
+  transform:
+    translateZ(8px);
+
+  filter:
+    blur(1px);
+}
+
+
+/* =========================================================
+   HEART GLOSS HIGHLIGHT
+========================================================= */
+
+.heart-3d {
+  /*
+    The pseudo layers above provide depth.
+    This background clipping adds a glossy
+    red-to-light visual to the heart.
+  */
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #ff9a9a 5%,
+      #ff4141 18%,
+      #ff1717 42%,
+      #e00000 68%,
+      #a50000 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* =========================================================
+   3D HEART ANIMATION
+========================================================= */
+
+@keyframes heart3DPop {
+
+  /* -------------------------------------------------------
+     START
+  ------------------------------------------------------- */
+
+  0% {
+
+    opacity: 0;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(-90deg)
+
+      rotateY(180deg)
+
+      rotateZ(-20deg)
+
+      translateY(35px)
+
+      scale(0);
+  }
+
+
+  /* -------------------------------------------------------
+     HEART APPEARS
+  ------------------------------------------------------- */
+
+  12% {
+
+    opacity: 1;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(25deg)
+
+      rotateY(-30deg)
+
+      rotateZ(5deg)
+
+      translateY(0)
+
+      scale(1.30);
+  }
+
+
+  /* -------------------------------------------------------
+     FIRST BOUNCE
+  ------------------------------------------------------- */
+
+  25% {
+
+    opacity: 1;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(-15deg)
+
+      rotateY(25deg)
+
+      rotateZ(-3deg)
+
+      translateY(0)
+
+      scale(0.92);
+  }
+
+
+  /* -------------------------------------------------------
+     SECOND BOUNCE
+  ------------------------------------------------------- */
+
+  38% {
+
+    opacity: 1;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(10deg)
+
+      rotateY(-15deg)
+
+      rotateZ(2deg)
+
+      translateY(0)
+
+      scale(1.10);
+  }
+
+
+  /* -------------------------------------------------------
+     NORMAL POSITION
+  ------------------------------------------------------- */
+
+  52% {
+
+    opacity: 1;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(0deg)
+
+      rotateY(0deg)
+
+      rotateZ(0deg)
+
+      translateY(0)
+
+      scale(1);
+  }
+
+
+  /* -------------------------------------------------------
+     HOLD
+  ------------------------------------------------------- */
+
+  72% {
+
+    opacity: 1;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(0deg)
+
+      rotateY(0deg)
+
+      rotateZ(0deg)
+
+      translateY(0)
+
+      scale(1);
+  }
+
+
+  /* -------------------------------------------------------
+     FADE OUT
+  ------------------------------------------------------- */
+
+  100% {
+
+    opacity: 0;
+
+    transform:
+
+      perspective(700px)
+
+      rotateX(15deg)
+
+      rotateY(25deg)
+
+      rotateZ(5deg)
+
+      translateY(-40px)
+
+      scale(0.75);
+  }
+}
+
+
+/* =========================================================
+   HEART GLOW ANIMATION
+========================================================= */
+
+@keyframes heartGlow {
+
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  12% {
+    opacity: 0.8;
+    transform: scale(1.25);
+  }
+
+  30% {
+    opacity: 0.65;
+    transform: scale(0.95);
+  }
+
+  52% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  72% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translateY(-30px)
+      scale(0.7);
+  }
+}
+
+
+/* =========================================================
+   LIKED TEXT
+========================================================= */
+
+.like-text {
+  position: relative;
+
+  margin-top: 12px;
+
+  color: #ffffff;
+
+  font-size: 32px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+
+  line-height: 1;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  text-align: center;
+
+  /*
+    White text with red glow
+    like the design.
+  */
+
+  text-shadow:
+
+    0 3px 8px
+    rgba(0, 0, 0, 0.65),
+
+    0 0 5px
+    rgba(255, 255, 255, 0.9),
+
+    0 0 12px
+    rgba(255, 45, 45, 0.95),
+
+    0 0 25px
+    rgba(255, 25, 25, 0.65);
+
+  animation:
+    likeTextPop
+    1.8s
+    ease
+    forwards;
+}
+
+
+/* =========================================================
+   TEXT ANIMATION
+========================================================= */
+
+@keyframes likeTextPop {
+
+  0% {
+
+    opacity: 0;
+
+    transform:
+      translateY(25px)
+      scale(0.60);
+  }
+
+
+  20% {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1.12);
+  }
+
+
+  50% {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+
+  75% {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+
+  100% {
+
+    opacity: 0;
+
+    transform:
+      translateY(-20px)
+      scale(0.80);
+  }
+}
+
+
+/* =========================================================
+   OVERLAY FADE
+========================================================= */
+
+@keyframes likeOverlayFade {
+
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+
+/* =========================================================
+   CONTENT POP
+========================================================= */
+
+@keyframes likeContentPop {
+
+  0% {
+
+    transform:
+      scale(0.70);
+  }
+
+
+  20% {
+
+    transform:
+      scale(1.08);
+  }
+
+
+  50% {
+
+    transform:
+      scale(1);
+  }
+
+
+  100% {
+
+    transform:
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .like-animation-content {
+    width: 260px;
+    height: 260px;
+  }
+
+  .heart-3d {
+    font-size: 115px;
+  }
+
+  .like-text {
+    font-size: 28px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .like-animation-content {
+    width: 220px;
+    height: 220px;
+  }
+
+  .heart-3d {
+    font-size: 95px;
+  }
+
+  .like-text {
+    font-size: 25px;
+  }
+
+  .like-animation-content::before {
+    width: 150px;
+    height: 150px;
+  }
+}

@@ -1,0 +1,1445 @@
+/* =====================================================
+   TASTE OF HEAVEN
+   PREMIUM RECIPE HEADER
+===================================================== */
+
+
+/* =====================================================
+   MAIN HEADER
+===================================================== */
+
+.top-bar {
+  width: calc(100% - 60px);
+
+  max-width: 1850px;
+
+  min-height: 105px;
+
+  margin: 20px auto;
+
+  padding: 16px 28px;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      110deg,
+      #fffef9 0%,
+      #fffdf7 55%,
+      #f7fbf3 100%
+    );
+
+  border: 1px solid #e5dfd1;
+
+  border-radius: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  position: relative;
+
+  z-index: 1000;
+
+  box-shadow:
+    0 12px 35px
+    rgba(30, 65, 48, 0.10);
+
+  /*
+    IMPORTANT:
+    Dropdown must be allowed outside
+    the header.
+  */
+  overflow: visible;
+}
+
+
+/* =====================================================
+   BACKGROUND GLOW
+===================================================== */
+
+.top-bar::before {
+  content: "";
+
+  position: absolute;
+
+  left: -80px;
+
+  bottom: -100px;
+
+  width: 350px;
+
+  height: 200px;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(65, 151, 91, 0.10),
+      transparent 70%
+    );
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+.top-bar::after {
+  content: "";
+
+  position: absolute;
+
+  right: -100px;
+
+  top: -100px;
+
+  width: 380px;
+
+  height: 200px;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(65, 151, 91, 0.08),
+      transparent 70%
+    );
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+/* =====================================================
+   HEADER CHILDREN
+===================================================== */
+
+.top-bar > * {
+  position: relative;
+
+  z-index: 5;
+}
+
+
+/* =====================================================
+   DECORATIVE LEAVES
+===================================================== */
+
+.header-leaves {
+  position: absolute !important;
+
+  pointer-events: none;
+
+  z-index: 2 !important;
+}
+
+
+/* =====================================================
+   LEFT LEAVES
+===================================================== */
+
+.header-leaves-left {
+  left: 5px;
+
+  bottom: 0;
+
+  width: 155px;
+
+  height: 80px;
+}
+
+
+/* =====================================================
+   RIGHT LEAVES
+===================================================== */
+
+.header-leaves-right {
+  right: 5px;
+
+  top: 0;
+
+  width: 155px;
+
+  height: 80px;
+}
+
+
+/* =====================================================
+   BASIC LEAF
+===================================================== */
+
+.leaf {
+  position: absolute;
+
+  display: block;
+
+  width: 34px;
+
+  height: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(49, 145, 82, 0.25),
+      rgba(105, 178, 118, 0.10)
+    );
+
+  border-radius:
+    100% 0 100% 0;
+
+  opacity: 0.9;
+}
+
+
+/* Leaf vein */
+
+.leaf::after {
+  content: "";
+
+  position: absolute;
+
+  left: 5px;
+
+  top: 8px;
+
+  width: 24px;
+
+  height: 1px;
+
+  background:
+    rgba(42, 120, 70, 0.30);
+
+  transform: rotate(-18deg);
+
+  border-radius: 5px;
+}
+
+
+/* =====================================================
+   LEFT LEAF POSITIONS
+===================================================== */
+
+.leaf-1 {
+  left: 5px;
+
+  bottom: 10px;
+
+  transform:
+    rotate(-35deg)
+    scale(1.15);
+}
+
+
+.leaf-2 {
+  left: 37px;
+
+  bottom: 3px;
+
+  transform:
+    rotate(10deg)
+    scale(0.9);
+}
+
+
+.leaf-3 {
+  left: 70px;
+
+  bottom: 20px;
+
+  transform:
+    rotate(-48deg)
+    scale(0.8);
+}
+
+
+.leaf-4 {
+  left: 105px;
+
+  bottom: 8px;
+
+  transform:
+    rotate(25deg)
+    scale(0.7);
+}
+
+
+/* =====================================================
+   RIGHT LEAF POSITIONS
+===================================================== */
+
+.leaf-5 {
+  right: 8px;
+
+  top: 13px;
+
+  transform:
+    rotate(145deg)
+    scale(1.1);
+}
+
+
+.leaf-6 {
+  right: 43px;
+
+  top: 3px;
+
+  transform:
+    rotate(115deg)
+    scale(0.9);
+}
+
+
+.leaf-7 {
+  right: 80px;
+
+  top: 20px;
+
+  transform:
+    rotate(165deg)
+    scale(0.75);
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.brand-section {
+  flex: 0 0 auto;
+
+  min-width: 455px;
+}
+
+
+.brand-logo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+
+/* =====================================================
+   LOGO CIRCLE
+===================================================== */
+
+.chef-logo {
+  width: 68px;
+
+  height: 68px;
+
+  flex-shrink: 0;
+
+  border: 3px solid #126047;
+
+  border-radius: 50%;
+
+  background: #fffefa;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  position: relative;
+
+  box-shadow:
+    inset 0 0 0 5px #f5faf4;
+}
+
+
+/* Inner plate */
+
+.chef-logo::before {
+  content: "";
+
+  position: absolute;
+
+  width: 43px;
+
+  height: 25px;
+
+  left: 10px;
+
+  bottom: 15px;
+
+  border: 2px solid #126047;
+
+  border-radius: 50%;
+}
+
+
+/* Plate base */
+
+.chef-logo::after {
+  content: "";
+
+  position: absolute;
+
+  width: 39px;
+
+  height: 4px;
+
+  left: 12px;
+
+  bottom: 11px;
+
+  background: #126047;
+
+  border-radius: 10px;
+}
+
+
+/* Food */
+
+.chef-hat {
+  position: relative;
+
+  z-index: 3;
+
+  margin-bottom: 12px;
+
+  color: #ef7625;
+
+  font-size: 25px;
+
+  line-height: 1;
+}
+
+
+/* =====================================================
+   BRAND TEXT
+===================================================== */
+
+.brand-text {
+  white-space: nowrap;
+}
+
+
+.brand-text h1 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 29px;
+
+  line-height: 1;
+
+  font-weight: 600;
+
+  letter-spacing: 0.3px;
+
+  color: #10523e;
+}
+
+
+.brand-text h1 span {
+  color: #c96e20;
+}
+
+
+.brand-text p {
+  margin: 10px 0 0;
+
+  text-align: center;
+
+  font-size: 9px;
+
+  letter-spacing: 3.5px;
+
+  font-weight: 600;
+
+  color: #707570;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+.nav-container {
+  flex: 0 0 auto;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 2px;
+
+  position: relative;
+
+  z-index: 1000;
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+.nav-home {
+  height: 50px;
+
+  padding: 0 21px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #269d56,
+      #208d4d
+    );
+
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 7px 16px
+    rgba(35, 145, 78, 0.22);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.nav-home:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 20px
+    rgba(35, 145, 78, 0.30);
+}
+
+
+/* =====================================================
+   CUISINE / FILTER CONTAINER
+===================================================== */
+
+.nav-dropdown {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  z-index: 10000;
+}
+
+
+/* =====================================================
+   CUISINE / FILTER BUTTON
+===================================================== */
+
+.nav-button {
+  height: 50px !important;
+
+  padding: 0 13px !important;
+
+  display: inline-flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  gap: 8px;
+
+  background: transparent !important;
+
+  border: none !important;
+
+  border-radius: 25px !important;
+
+  color: #153e32 !important;
+
+  font-size: 16px !important;
+
+  font-weight: 600 !important;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  width: auto !important;
+
+  min-width: 0 !important;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.nav-button:hover {
+  background: #edf6ef !important;
+
+  color: #1c8050 !important;
+}
+
+
+/* =====================================================
+   DROPDOWN ARROW
+===================================================== */
+
+.dropdown-arrow {
+  font-size: 9px;
+
+  transition:
+    transform 0.2s ease;
+}
+
+
+.dropdown-arrow.rotate {
+  transform: rotate(180deg);
+}
+
+
+/* =====================================================
+   DROPDOWN MENU
+   IMPORTANT: HIGH Z-INDEX
+===================================================== */
+
+.dropdown-content {
+  position: absolute;
+
+  top: 58px;
+
+  left: 0;
+
+  width: 180px;
+
+  padding: 8px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7df;
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 15px 35px
+    rgba(0, 0, 0, 0.18);
+
+  z-index: 999999;
+
+  display: block;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   DROPDOWN BUTTON
+===================================================== */
+
+.dropdown-content button {
+  width: 100% !important;
+
+  height: auto !important;
+
+  min-height: 42px !important;
+
+  padding: 10px 14px !important;
+
+  margin: 0 !important;
+
+  background: transparent !important;
+
+  border: none !important;
+
+  border-radius: 9px !important;
+
+  color: #333333 !important;
+
+  font-family: inherit;
+
+  font-size: 14px !important;
+
+  font-weight: 500 !important;
+
+  text-align: left;
+
+  display: flex !important;
+
+  align-items: center;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
+
+
+.dropdown-content button:hover {
+  background: #edf6ef !important;
+
+  color: #1c8050 !important;
+}
+/* =====================================================
+   ADMIN DASHBOARD LINK
+   Appears in the same right-side area as PROFILE.
+===================================================== */
+
+.admin-link {
+  flex: 0 0 auto;
+  height: 48px;
+  min-width: 112px;
+  padding: 0 16px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #315c3a, #24482d);
+  color: #ffffff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-sizing: border-box;
+  box-shadow: 0 6px 14px rgba(49, 92, 58, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.admin-link:hover {
+  background: linear-gradient(135deg, #24482d, #1d3d25);
+  transform: translateY(-2px);
+  box-shadow: 0 9px 18px rgba(49, 92, 58, 0.28);
+}
+
+.admin-link:active {
+  transform: scale(0.97);
+}
+
+.admin-link svg {
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-container {
+  flex: 1 1 auto;
+
+  min-width: 170px;
+
+  max-width: 350px;
+
+  height: 52px;
+
+  margin-left: auto;
+
+  padding: 0 18px;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f5f6ef,
+      #f0f2ea
+    );
+
+  border: 1px solid #e2e5db;
+
+  border-radius: 28px;
+
+  display: flex;
+
+  align-items: center;
+
+  overflow: hidden;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.search-container:focus-within {
+  background: #ffffff;
+
+  border-color: #269653;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(38, 150, 83, 0.08);
+}
+
+
+.search-icon {
+  color: #41685a;
+
+  font-size: 19px;
+
+  flex-shrink: 0;
+}
+
+
+.search-input {
+  width: 100%;
+
+  min-width: 0;
+
+  margin-left: 12px;
+
+  padding: 0 !important;
+
+  border: none !important;
+
+  outline: none !important;
+
+  background: transparent !important;
+
+  box-shadow: none !important;
+
+  font-size: 14px;
+
+  color: #303a35;
+}
+
+
+.search-input::placeholder {
+  color: #858d88;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   PROFILE SECTION
+===================================================== */
+
+.profile-section {
+  flex: 0 1 auto;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+
+  padding-left: 14px;
+
+  border-left: 1px solid #dfe2d8;
+
+  position: relative;
+
+  z-index: 1000;
+}
+
+
+/* =====================================================
+   PROFILE LINK
+===================================================== */
+
+.profile-link {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #153e32;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  flex-shrink: 1;
+
+  min-width: 0;
+}
+
+
+/* =====================================================
+   PROFILE IMAGE
+===================================================== */
+
+.profile-image {
+  width: 48px;
+
+  height: 48px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 2px solid #279653;
+
+  background: #edf6ef;
+
+  box-shadow:
+    0 3px 8px
+    rgba(0, 0, 0, 0.10);
+}
+
+
+/* =====================================================
+   USERNAME
+===================================================== */
+
+.username {
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #163e32;
+
+  max-width: 65px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   PROFILE ARROW
+===================================================== */
+
+.profile-arrow {
+  font-size: 9px;
+
+  flex-shrink: 0;
+
+  color: #526b60;
+}
+
+
+/* =====================================================
+   SIGN OUT
+===================================================== */
+
+.logout-button {
+  flex: 0 0 auto;
+
+  height: 48px !important;
+
+  width: 112px !important;
+
+  min-width: 112px !important;
+
+  max-width: 112px !important;
+
+  padding: 0 12px !important;
+
+  margin: 0 !important;
+
+  border: none !important;
+
+  border-radius: 25px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f47c29,
+      #e66a1d
+    ) !important;
+
+  color: #ffffff !important;
+
+  display: inline-flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  gap: 8px;
+
+  font-size: 14px !important;
+
+  font-weight: 600 !important;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 6px 14px
+    rgba(230, 107, 29, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.logout-button:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #e96d1e,
+      #d85c13
+    ) !important;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 9px 18px
+    rgba(230, 107, 29, 0.28);
+}
+
+
+.logout-button:active {
+  transform: scale(0.97);
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+.login-button {
+  flex: 0 0 auto;
+
+  height: 48px;
+
+  min-width: 90px;
+
+  padding: 0 20px;
+
+  border-radius: 25px;
+
+  background: #269653;
+
+  color: white;
+
+  text-decoration: none;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   RESPONSIVE - 1350px
+===================================================== */
+
+@media (max-width: 1350px) {
+
+  .top-bar {
+    width: calc(100% - 40px);
+
+    padding-left: 18px;
+
+    padding-right: 18px;
+
+    gap: 8px;
+  }
+
+
+  .brand-section {
+    min-width: 390px;
+  }
+
+
+  .brand-text h1 {
+    font-size: 25px;
+  }
+
+
+  .brand-text p {
+    font-size: 8px;
+
+    letter-spacing: 2.8px;
+  }
+
+
+  .chef-logo {
+    width: 60px;
+
+    height: 60px;
+  }
+
+
+  .nav-home {
+    padding: 0 15px;
+  }
+
+
+  .nav-button {
+    padding: 0 8px !important;
+  }
+
+
+  .search-container {
+    max-width: 280px;
+  }
+
+
+  .logout-button {
+    width: 105px !important;
+
+    min-width: 105px !important;
+
+    max-width: 105px !important;
+  }
+
+  .admin-link {
+    min-width: 105px;
+    padding: 0 13px;
+  }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE - 1150px
+===================================================== */
+
+@media (max-width: 1150px) {
+
+  .brand-section {
+    min-width: auto;
+  }
+
+
+  .brand-text h1 {
+    font-size: 22px;
+  }
+
+
+  .brand-text p {
+    display: none;
+  }
+
+
+  .chef-logo {
+    width: 55px;
+
+    height: 55px;
+  }
+
+
+  .search-container {
+    max-width: 230px;
+  }
+
+
+  .username {
+    display: none;
+  }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE - 950px
+===================================================== */
+
+@media (max-width: 950px) {
+
+  .top-bar {
+    flex-wrap: wrap;
+
+    min-height: auto;
+
+    padding: 14px;
+  }
+
+
+  .brand-section {
+    flex: 1;
+  }
+
+
+  .search-container {
+    order: 2;
+
+    flex: 1;
+
+    max-width: none;
+
+    min-width: 180px;
+  }
+
+
+  .profile-section {
+    order: 3;
+
+    border-left: none;
+
+    padding-left: 0;
+  }
+
+
+  .nav-container {
+    order: 4;
+
+    width: 100%;
+
+    justify-content: center;
+  }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE - 650px
+===================================================== */
+
+@media (max-width: 650px) {
+
+  .top-bar {
+    width: calc(100% - 20px);
+
+    margin: 10px auto;
+
+    padding: 12px;
+
+    border-radius: 22px;
+  }
+
+
+  .brand-text {
+    display: none;
+  }
+
+
+  .chef-logo {
+    width: 48px;
+
+    height: 48px;
+  }
+
+
+  .search-container {
+    min-width: 130px;
+
+    height: 44px;
+  }
+
+
+  .nav-home,
+  .nav-button {
+    height: 44px !important;
+
+    padding: 0 8px !important;
+
+    font-size: 13px !important;
+  }
+
+
+  .profile-image {
+    width: 42px;
+
+    height: 42px;
+  }
+
+
+  .logout-button {
+    width: 45px !important;
+
+    min-width: 45px !important;
+
+    max-width: 45px !important;
+
+    padding: 0 !important;
+  }
+
+
+  .logout-button span {
+    display: none;
+  }
+
+
+  .header-leaves {
+    opacity: 0.5;
+  }
+
+}
+/* =====================================================
+   FILTER DROPDOWN
+   (only the filter menu; everything above is untouched)
+===================================================== */
+
+/* Filter button when the menu is open */
+.nav-button.filter-active {
+  background: #edf6ef !important;
+
+  color: #1c8050 !important;
+}
+
+
+/* Filter menu box */
+.dropdown-content.filter-dropdown {
+  width: 200px;
+
+  padding: 10px;
+
+  border-radius: 18px;
+
+  border: 1px solid #e1e8dd;
+
+  box-shadow:
+    0 18px 40px
+    rgba(20, 60, 40, 0.18);
+}
+
+
+/* Every option row */
+.dropdown-content.filter-dropdown .filter-option {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 12px;
+
+  width: 100% !important;
+
+  min-height: 44px !important;
+
+  padding: 10px 14px !important;
+
+  margin-bottom: 4px !important;
+
+  border-radius: 12px !important;
+
+  font-size: 14px !important;
+
+  font-weight: 600 !important;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.dropdown-content.filter-dropdown .filter-option:hover {
+  transform: translateX(3px);
+}
+
+
+/* Veg */
+.dropdown-content.filter-dropdown .veg-option {
+  color: #1f8a4c !important;
+}
+
+.dropdown-content.filter-dropdown .veg-option:hover {
+  background: #e6f5ea !important;
+
+  color: #176b3a !important;
+}
+
+
+/* Non-veg */
+.dropdown-content.filter-dropdown .nonveg-option {
+  color: #c4501a !important;
+}
+
+.dropdown-content.filter-dropdown .nonveg-option:hover {
+  background: #fdeee4 !important;
+
+  color: #a53f12 !important;
+}
+
+
+/* Star ratings */
+.dropdown-content.filter-dropdown .rating-option {
+  color: #5a4a1a !important;
+}
+
+.dropdown-content.filter-dropdown .rating-option:hover {
+  background: #fff6dc !important;
+
+  color: #8a6a00 !important;
+}
+
+
+/* All recipes */
+.dropdown-content.filter-dropdown .all-option {
+  color: #153e32 !important;
+
+  margin-bottom: 0 !important;
+}
+
+.dropdown-content.filter-dropdown .all-option:hover {
+  background: #edf6ef !important;
+
+  color: #1c8050 !important;
+}
+
+
+/* Icons */
+.filter-option-icon {
+  width: 16px;
+
+  font-size: 15px;
+
+  flex-shrink: 0;
+}
+
+.filter-star-icon {
+  width: 16px;
+
+  font-size: 15px;
+
+  flex-shrink: 0;
+
+  color: #f2b01e;
+}
+
+.filter-all-icon {
+  width: 16px;
+
+  font-size: 14px;
+
+  flex-shrink: 0;
+
+  color: #269653;
+}
+
+
+/* Divider lines between groups */
+.dropdown-separator {
+  height: 1px;
+
+  margin: 6px 4px 8px;
+
+  background: #e6e9e0;
+}
