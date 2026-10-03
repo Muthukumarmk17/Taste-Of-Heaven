@@ -1380,6 +1380,9 @@ app.delete(
       await Comment.findByIdAndDelete(
         id
       );
+      await ReviewAnalysis.deleteMany({
+  reviewId: id,
+});
 
       res.status(200).json({
         message:
@@ -1418,10 +1421,18 @@ app.get(
         });
       }
 
-      const analyses =
-        await ReviewAnalysis.find({
-          recipeName,
-        }).lean();
+      const reviews = await Comment.find({ recipeName })
+  .select("_id")
+  .lean();
+
+const reviewIds = reviews.map(
+  (review) => review._id.toString()
+);
+
+const analyses = await ReviewAnalysis.find({
+  recipeName,
+  reviewId: { $in: reviewIds },
+}).lean();
 
       const total =
         analyses.length;
@@ -1728,6 +1739,9 @@ app.delete(
         await Comment.findByIdAndDelete(
           req.params.id
         );
+        await ReviewAnalysis.deleteMany({
+  reviewId: req.params.id,
+});
 
       if (!review) {
         return res.status(404).json({

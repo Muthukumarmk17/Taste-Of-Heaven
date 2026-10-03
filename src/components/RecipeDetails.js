@@ -36,6 +36,18 @@ function RecipeDetails({
   const navigate =
     useNavigate();
 
+    // ==================================================
+// SCROLL TO TOP WHEN RECIPE DETAILS OPENS
+// ==================================================
+
+useEffect(() => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "instant",
+  });
+}, [name]);
+
 
   // ==================================================
   // FIND RECIPE
@@ -678,11 +690,37 @@ function RecipeDetails({
             />
 
 
-            <div className="vegetarian-badge">
+           <div className="vegetarian-badge">
+  {(() => {
+    const recipeName = String(recipe.name || "").trim();
 
-              🌿 Vegetarian
+    // 1. Check type written inside the recipe name brackets
+    const bracketMatch = recipeName.match(/\(([^()]*)\)\s*$/);
 
-            </div>
+    const typeFromName = bracketMatch
+      ? bracketMatch[1].trim().toLowerCase()
+      : "";
+
+    // 2. Check recipe.type
+    const typeFromRecipe = String(recipe.type || "")
+      .trim()
+      .toLowerCase();
+
+    // 3. Use bracket type first, otherwise recipe.type
+    const finalType = typeFromName || typeFromRecipe;
+
+    const isNonVeg =
+      finalType === "non-veg" ||
+      finalType === "non veg" ||
+      finalType === "nonveg" ||
+      finalType === "non-vegetarian" ||
+      finalType === "nonvegetarian";
+
+    return isNonVeg
+      ? "🍗 Non-Vegetarian"
+      : "🌿 Vegetarian";
+  })()}
+</div>
 
           </div>
 

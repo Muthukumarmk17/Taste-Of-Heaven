@@ -1443,3 +1443,204 @@
 
   background: #e6e9e0;
 }
+/* =====================================================
+   MOBILE HEADER - PROFILE / ADMIN VISIBILITY FIX
+===================================================== */
+
+@media (max-width: 950px) {
+
+  .top-bar {
+    width: calc(100% - 20px) !important;
+    margin: 10px auto !important;
+    padding: 12px !important;
+
+    display: flex !important;
+    flex-wrap: wrap !important;
+
+    align-items: center !important;
+    gap: 10px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  /* -----------------------------
+     BRAND
+  ----------------------------- */
+
+  .brand-section {
+    order: 1 !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .brand-text {
+    display: none !important;
+  }
+
+  .chef-logo {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+
+  /* -----------------------------
+     PROFILE / ADMIN SECTION
+  ----------------------------- */
+
+  .profile-section {
+    order: 2 !important;
+
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 6px !important;
+
+    min-width: 0 !important;
+
+    padding-left: 0 !important;
+    border-left: none !important;
+  }
+
+
+  /* -----------------------------
+     NORMAL USER PROFILE
+  ----------------------------- */
+
+  .profile-link {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex-shrink: 0 !important;
+
+    gap: 0 !important;
+  }
+
+  .profile-image {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    width: 42px !important;
+    height: 42px !important;
+
+    min-width: 42px !important;
+    min-height: 42px !important;
+
+    flex-shrink: 0 !important;
+  }
+
+  .username,
+  .profile-arrow {
+    display: none !important;
+  }
+
+
+  /* -----------------------------
+     ADMIN BUTTON
+  ----------------------------- */
+
+  .admin-link {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 80px !important;
+
+    height: 42px !important;
+
+    padding: 0 12px !important;
+
+    font-size: 13px !important;
+  }
+
+
+  /* -----------------------------
+     SIGN OUT
+  ----------------------------- */
+
+  .logout-button {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    flex: 0 0 auto !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+
+    height: 42px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 50% !important;
+  }
+
+  .logout-button span {
+    display: none !important;
+  }
+
+
+  /* -----------------------------
+     SEARCH
+  ----------------------------- */
+
+  .search-container {
+    order: 3 !important;
+
+    flex: 1 1 100% !important;
+
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    height: 44px !important;
+
+    margin: 0 !important;
+  }
+
+
+  /* -----------------------------
+     NAVIGATION
+  ----------------------------- */
+
+  .nav-container {
+    order: 4 !important;
+
+    width: 100% !important;
+
+    display: flex !important;
+
+    justify-content: center !important;
+
+    flex-wrap: nowrap !important;
+
+    gap: 2px !important;
+  }
+
+  .nav-home,
+  .nav-button {
+    height: 42px !important;
+
+    padding: 0 8px !important;
+
+    font-size: 13px !important;
+
+    gap: 5px !important;
+  }
+}
