@@ -70,21 +70,22 @@ app.use(express.json({ limit: "10mb" }));
 // =====================================================
 
 
+
 app.use(
   session({
-    secret:
-      process.env.SESSION_SECRET ||
-      "CHANGE_THIS_SESSION_SECRET",
+    secret: process.env.SESSION_SECRET || "development-only-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite:
+        process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
+
 
 
 
