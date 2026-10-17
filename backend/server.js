@@ -1,5 +1,15 @@
 require("dotenv").config();
 
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+}
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -7,10 +17,24 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const { google } = require("googleapis");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const path = require("path");
+
 
 const User = require("./models/User");
 const LikedRecipe = require("./models/LikedRecipe");
 const Comment = require("./models/Comment");
+const analyzeReview = require("./utils/analyzeReview");
+const Notification = require("./models/Notification");
+
+// Gmail email configuration
+const emailTransporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_APP_PASSWORD,
+  },
+});
 
 const app = express();
 app.set("trust proxy", 1);
@@ -45,24 +69,23 @@ app.use(express.json({ limit: "10mb" }));
 // SESSION - GOOGLE OAUTH
 // =====================================================
 
+
 app.use(
   session({
     secret:
       process.env.SESSION_SECRET ||
       "CHANGE_THIS_SESSION_SECRET",
-
     resave: false,
-
     saveUninitialized: false,
-
     cookie: {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: false,
+      sameSite: "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
+
 
 
 // =====================================================
@@ -73,14 +96,13 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB connected");
+
+    // Analyze existing reviews missing AI analysis
+    analyzeMissingReviews();
   })
   .catch((error) => {
-    console.error(
-      "MongoDB connection error:",
-      error
-    );
+    console.error("MongoDB connection error:", error);
   });
-
 
 // =====================================================
 // REVIEW ANALYSIS MODEL
@@ -112,6 +134,56 @@ const ReviewAnalysis =
     reviewAnalysisSchema
   );
 
+  // =====================================================
+// ANALYZE REVIEWS THAT FAILED EARLIER
+// =====================================================
+
+let backfillRunning = false;
+
+async function analyzeMissingReviews() {
+  if (backfillRunning) return;
+  backfillRunning = true;
+
+  try {
+    const analyzed = await ReviewAnalysis.find().select("reviewId").lean();
+    const analyzedIds = analyzed
+      .map((a) => a.reviewId)
+      .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+    const missing = await Comment.find({
+      _id: { $nin: analyzedIds },
+    }).limit(5);
+
+    for (const review of missing) {
+      try {
+        const ai = await analyzeReview(review.comments, review.rating);
+
+        await ReviewAnalysis.create({
+          reviewId: review._id.toString(),
+          recipeName: review.recipeName,
+          username: review.username,
+          email: review.email,
+          rating: review.rating,
+          comments: review.comments,
+          sentiment: ai.sentiment,
+          category: ai.category,
+          keywords: ai.keywords,
+          summary: ai.summary,
+          analyzedAt: new Date().toISOString(),
+        });
+
+        console.log("Missing analysis completed for", review._id.toString());
+      } catch (error) {
+        console.error("Backfill stopped:", error.message);
+        break;
+      }
+    }
+  } catch (error) {
+    console.error("Backfill error:", error.message);
+  } finally {
+    backfillRunning = false;
+  }
+}
 
 // =====================================================
 // RECIPE SCHEMA
@@ -140,7 +212,7 @@ const recipeSchema =
 
       type: {
         type: String,
-        enum: ["Veg", "Non-veg"],
+        enum: ["Veg", "Non-veg", "Desserts"],
         default: "Veg",
       },
 
@@ -556,59 +628,127 @@ app.get(
             normalizedEmail,
         });
 
-      if (!user) {
-        // Your User model uses password-based login,
-        // so Google-created accounts receive a random
-        // unusable password hash.
-        const randomPassword =
-          crypto.randomBytes(32)
-            .toString("hex");
+      
+if (!user) {
+  const randomPassword = crypto.randomBytes(32).toString("hex");
+  const hashedPassword = await bcrypt.hash(randomPassword, 10);
+  const fallbackUsername = normalizedEmail.split("@")[0];
 
-        const hashedPassword =
-          await bcrypt.hash(
-            randomPassword,
-            10
-          );
+  user = new User({
+    username: String(googleName || fallbackUsername).trim(),
+    email: normalizedEmail,
+    password: hashedPassword,
+    role: "user",
+    isVerified: false,
+    welcomeEmailSent: false,
+    ...(googlePicture ? { profilePicture: googlePicture } : {}),
+  });
+} else if (googlePicture && !user.profilePicture) {
+  user.profilePicture = googlePicture;
+}
 
-        const fallbackUsername =
-          normalizedEmail.split("@")[0];
+// Require OTP verification for new or unverified Google users.
+if (user.isVerified !== true) {
+  const otp = crypto.randomInt(100000, 1000000).toString();
 
-        user = new User({
-          username:
-            String(
-              googleName ||
-                fallbackUsername
-            ).trim(),
+  user.emailVerificationOtpHash = crypto
+    .createHash("sha256")
+    .update(otp)
+    .digest("hex");
 
-          email:
-            normalizedEmail,
+  user.emailVerificationOtpExpires = new Date(
+    Date.now() + 10 * 60 * 1000
+  );
 
-          password:
-            hashedPassword,
+  user.emailVerificationAttempts = 0;
 
-          role: "user",
+  await user.save();
 
-          ...(googlePicture
-            ? {
-                profilePicture:
-                  googlePicture,
-              }
-            : {}),
-        });
+  try {
+await emailTransporter.sendMail({
+  from: process.env.EMAIL_USER,
+  to: normalizedEmail,
+  subject: "Verify your Taste of Heaven account",
 
-        await user.save();
-      } else if (
-        googlePicture &&
-        !user.profilePicture
-      ) {
-        // Keep the existing user's account data,
-        // but use the Google profile image if they
-        // do not already have one.
-        user.profilePicture =
-          googlePicture;
+  text: `Hello ${user.username},
 
-        await user.save();
-      }
+Welcome to Taste of Heaven!
+
+Your Google sign-in verification code is: ${otp}
+
+This code expires in 10 minutes.
+
+If you did not attempt to sign in, you can ignore this email.`,
+
+  html: `
+    <div style="
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: auto;
+      padding: 24px;
+      border: 1px solid #eeeeee;
+      border-radius: 12px;
+      color: #262626;
+      line-height: 1.6;
+      background: #ffffff;
+    ">
+      <h2 style="margin-top: 0;">
+        Welcome to Taste of Heaven!
+      </h2>
+
+      <p>Hello ${escapeHtml(user.username)},</p>
+
+      <p>
+        Please use the verification code below
+        to verify your Google sign-in.
+      </p>
+
+      <div style="
+        font-size: 30px;
+        font-weight: bold;
+        letter-spacing: 8px;
+        padding: 16px;
+        background: #f5f5f5;
+        text-align: center;
+        border-radius: 8px;
+        margin: 16px 0;
+      ">
+        ${otp}
+      </div>
+
+      <p>
+        This code expires in
+        <strong>10 minutes</strong>.
+      </p>
+
+      <p>
+        If you did not attempt to sign in,
+        you can ignore this email.
+      </p>
+
+      <p>Taste of Heaven Team</p>
+    </div>
+  `,
+});
+
+  } catch (emailError) {
+    console.error("Google OTP email failed:", emailError.message);
+    return res.redirect(GOOGLE_FRONTEND_FAILURE_URL);
+  }
+
+  const otpRedirectUrl = new URL(
+    process.env.GOOGLE_FRONTEND_OTP_URL ||
+      "http://localhost:3000/login"
+  );
+
+  otpRedirectUrl.searchParams.set("googleOtpRequired", "true");
+  otpRedirectUrl.searchParams.set("email", normalizedEmail);
+
+  return res.redirect(otpRedirectUrl.toString());
+}
+
+// Existing verified Google users continue below.
+
 
       // Never store the password in the session.
       const {
@@ -738,157 +878,496 @@ app.post(
 );
 
 
-// =====================================================
-// USER REGISTRATION
-// =====================================================
 
-app.post(
-  "/api/register",
-  async (req, res) => {
-    const {
-      username,
-      email,
-      password,
-    } = req.body;
+/* =====================================================
+   USER REGISTRATION
+===================================================== */
 
-    try {
-      if (
-        !username ||
-        !email ||
-        !password
-      ) {
-        return res.status(400).json({
-          error:
-            "Username, email and password are required.",
-        });
-      }
+app.post("/api/register", async (req, res) => {
+  const { username, email, password } = req.body;
 
-      const normalizedEmail =
-        email
-          .trim()
-          .toLowerCase();
-
-      const existingUser =
-        await User.findOne({
-          email: normalizedEmail,
-        });
-
-      if (existingUser) {
-        return res.status(400).json({
-          error:
-            "Email already exists.",
-        });
-      }
-
-      const hashedPassword =
-        await bcrypt.hash(
-          password,
-          10
-        );
-
-      const newUser =
-        new User({
-          username:
-            username.trim(),
-
-          email:
-            normalizedEmail,
-
-          password:
-            hashedPassword,
-
-          role: "user",
-        });
-
-      await newUser.save();
-
-      res.status(201).json({
-        message:
-          "User created successfully!",
-      });
-    } catch (error) {
-      console.error(
-        "Error creating user:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Error creating user",
+  try {
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        error: "Username, email and password are required.",
       });
     }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedUsername = username.trim();
+
+    if (!normalizedUsername) {
+      return res.status(400).json({
+        error: "Username is required.",
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        error: "Password must be at least 8 characters long.",
+      });
+    }
+
+    // Check whether the email already exists
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        error: "Email already exists.",
+      });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate a secure 6-digit OTP
+    const otp = crypto.randomInt(100000, 1000000).toString();
+
+    // Hash the OTP before saving it
+    const otpHash = crypto
+      .createHash("sha256")
+      .update(otp)
+      .digest("hex");
+
+    // Create the unverified user
+    const newUser = new User({
+      username: normalizedUsername,
+      email: normalizedEmail,
+      password: hashedPassword,
+      role: "user",
+      isVerified: false,
+      emailVerificationOtpHash: otpHash,
+      emailVerificationOtpExpires: new Date(
+        Date.now() + 10 * 60 * 1000
+      ),
+      emailVerificationAttempts: 0,
+      welcomeEmailSent: false,
+    });
+
+    await newUser.save();
+
+    // Send the verification OTP to Gmail
+    try {
+      await emailTransporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: normalizedEmail,
+        subject: "Verify your Taste of Heaven account",
+
+        text: `Hello ${normalizedUsername},
+
+Welcome to Taste of Heaven!
+
+Your email verification code is: ${otp}
+
+This code expires in 10 minutes.
+
+If you did not create this account, you can ignore this email.`,
+
+        html: `
+          <div style="
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: auto;
+            padding: 24px;
+            border: 1px solid #eeeeee;
+            border-radius: 12px;
+          ">
+            <h2>Welcome to Taste of Heaven!</h2>
+
+            <p>Hello ${normalizedUsername},</p>
+
+            <p>
+              Please use the verification code below
+              to verify your email address.
+            </p>
+
+            <div style="
+              font-size: 30px;
+              font-weight: bold;
+              letter-spacing: 8px;
+              padding: 16px;
+              background: #f5f5f5;
+              text-align: center;
+              border-radius: 8px;
+            ">
+              ${otp}
+            </div>
+
+            <p>
+              This code expires in
+              <strong>10 minutes</strong>.
+            </p>
+
+            <p>
+              If you did not create this account,
+              you can ignore this email.
+            </p>
+          </div>
+        `,
+      });
+    } catch (emailError) {
+      // Delete the unverified account if email delivery fails
+      await User.deleteOne({ _id: newUser._id });
+
+      console.error(
+        "OTP email sending failed:",
+        emailError.message
+      );
+
+      return res.status(500).json({
+        error:
+          "Unable to send verification email. Please try again.",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Verification code sent to your email address.",
+      requiresEmailVerification: true,
+      email: normalizedEmail,
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        error: "Email already exists.",
+      });
+    }
+
+    return res.status(500).json({
+      error: "Error creating account.",
+    });
   }
-);
+});
+
+// VERIFY EMAIL OTP
+app.post("/api/verify-email", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // 1. Validate input
+    if (!email || !otp) {
+      return res.status(400).json({
+        error: "Email and verification code are required.",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const enteredOtp = String(otp).trim();
+
+    if (!/^\d{6}$/.test(enteredOtp)) {
+      return res.status(400).json({
+        error: "Please enter a valid six-digit verification code.",
+      });
+    }
+
+    // 2. Find the user
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "Account not found. Please register again.",
+      });
+    }
+
+    // 3. Check whether the account is already verified
+    if (user.isVerified === true) {
+      return res.status(200).json({
+        message: "Your email is already verified. You can log in.",
+        verified: true,
+      });
+    }
+
+    // 4. Check whether an OTP exists
+    if (
+      !user.emailVerificationOtpHash ||
+      !user.emailVerificationOtpExpires
+    ) {
+      return res.status(400).json({
+        error: "No active verification code found. Please register again or request a new code.",
+      });
+    }
+
+    // 5. Limit incorrect attempts
+    if (user.emailVerificationAttempts >= 5) {
+      return res.status(429).json({
+        error: "Too many incorrect attempts. Please request a new verification code.",
+      });
+    }
+
+    // 6. Check OTP expiration
+    if (user.emailVerificationOtpExpires.getTime() <= Date.now()) {
+      return res.status(400).json({
+        error: "Your verification code has expired. Please request a new code.",
+      });
+    }
+
+    // 7. Hash the submitted OTP
+    const enteredOtpHash = crypto
+      .createHash("sha256")
+      .update(enteredOtp)
+      .digest();
+
+    const storedOtpHash = Buffer.from(
+      user.emailVerificationOtpHash,
+      "hex"
+    );
+
+    // Compare hashes safely
+    const otpMatches =
+      storedOtpHash.length === enteredOtpHash.length &&
+      crypto.timingSafeEqual(storedOtpHash, enteredOtpHash);
+
+    // 8. Reject an incorrect OTP
+    if (!otpMatches) {
+      user.emailVerificationAttempts += 1;
+      await user.save();
+
+      const remainingAttempts = Math.max(
+        0,
+        5 - user.emailVerificationAttempts
+      );
+
+      return res.status(400).json({
+        error: "Incorrect verification code.",
+        remainingAttempts,
+      });
+    }
+
+    // 9. Verify the account and invalidate the OTP
+    user.isVerified = true;
+    user.emailVerificationOtpHash = undefined;
+    user.emailVerificationOtpExpires = undefined;
+    user.emailVerificationAttempts = 0;
+
+    await user.save();
+    
+try {
+  const normalizedEmail = String(user.email || "").trim().toLowerCase();
+
+  // One welcome notification document for this recipient.
+  const existingWelcome = await Notification.findOne({
+    type: "update",
+    title: "Welcome to Taste of Heaven!",
+    "recipients.email": normalizedEmail,
+  });
+
+  if (!existingWelcome && normalizedEmail) {
+    await Notification.create({
+      type: "update",
+      title: "Welcome to Taste of Heaven!",
+      message:
+        "Your email has been verified successfully. Welcome to our food-loving community!",
+      recipients: [{ email: normalizedEmail, status: "pending", isRead: false }],
+    });
+  }
+} catch (notificationError) {
+  console.error("Could not create welcome notification:", notificationError);
+}
+
+
+    
+// 10. Send the welcome email in the background
+// Account verification will not wait for Gmail.
+
+emailTransporter
+  .sendMail({
+    from: process.env.EMAIL_USER,
+    to: user.email,
+    subject: "Welcome to Taste of Heaven!",
+
+    text: `Hello ${user.username},
+
+Welcome to Taste of Heaven!
+
+Your email has been successfully verified, and your account is ready to use.
+
+You can now discover recipes, share your cooking experiences, rate dishes, and connect with our food-loving community.
+
+We're happy to have you here!
+
+Happy cooking,
+The Taste of Heaven Team`,
+
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px;
+                  margin: auto; padding: 24px; color: #26352a;
+                  line-height: 1.7; background: #ffffff;">
+
+        <div style="text-align: center; margin-bottom: 24px;">
+          <img src="cid:tasteofheavenlogo"
+               alt="Taste of Heaven Logo"
+               style="width: 120px; max-width: 100%; height: auto;
+                      display: block; margin: 0 auto;" />
+        </div>
+
+        <h2 style="color: #155b32; text-align: center;">
+          Welcome to Taste of Heaven!
+        </h2>
+
+        <p>Hi ${escapeHtml(user.username)},</p>
+
+        <p>
+          Your email has been successfully verified, and your account
+          is ready to use.
+        </p>
+
+        <p>
+          You can now discover recipes, share your cooking experiences,
+          rate dishes, and connect with our food-loving community.
+        </p>
+
+        <p>We're happy to have you here!</p>
+
+        <p>
+          Happy cooking,<br />
+          <strong style="color: #155b32;">
+            The Taste of Heaven Team
+          </strong>
+        </p>
+      </div>
+    `,
+
+    attachments: [
+      {
+        filename: "taste-of-heaven-logo.png",
+        path: path.join(
+          __dirname,
+          "assets",
+          "taste-of-heaven-logo.png"
+        ),
+        cid: "tasteofheavenlogo",
+      },
+    ],
+  })
+  .then(async () => {
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { welcomeEmailSent: true } }
+    );
+
+    console.log("Welcome email sent to:", user.email);
+  })
+  .catch((emailError) => {
+    console.error(
+      "Welcome email sending failed:",
+      emailError.message
+    );
+  });
+
+    
+    // 11. Establish a login session for Google OTP verification.
+    const googleOtpLogin =
+      req.body.googleOtpLogin === true ||
+      req.body.googleOtpLogin === "true";
+
+    if (googleOtpLogin) {
+      const { password: _password, ...userInfo } = user.toObject();
+
+      req.session.user = userInfo;
+      req.session.googleLogin = true;
+
+      await new Promise((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+
+      return res.status(200).json({
+        message: "Email verified successfully. You are now logged in.",
+        verified: true,
+        loggedIn: true,
+        user: userInfo,
+        welcomeEmailSent: user.welcomeEmailSent === true,
+      });
+    }
+
+    
+    // Normal email/password registration keeps its existing behavior.
+    return res.status(200).json({
+      message: "Email verified successfully. You can now log in.",
+      verified: true,
+      loggedIn: false,
+      welcomeEmailSent: user.welcomeEmailSent === true,
+    });
+
+  } catch (error) {
+    console.error("Email verification error:", error);
+
+    return res.status(500).json({
+      error: "An error occurred while verifying your email.",
+    });
+  }
+});
+
 
 
 // =====================================================
 // USER LOGIN
 // =====================================================
 
-app.post(
-  "/api/login",
-  async (req, res) => {
-    const {
-      email,
-      password,
-    } = req.body;
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
 
-    try {
-      if (!email || !password) {
-        return res.status(400).json({
-          error:
-            "Email and password are required.",
-        });
-      }
-
-      const user =
-        await User.findOne({
-          email:
-            email
-              .trim()
-              .toLowerCase(),
-        });
-
-      if (!user) {
-        return res.status(400).json({
-          error:
-            "User not found",
-        });
-      }
-
-      const isMatch =
-        await bcrypt.compare(
-          password,
-          user.password
-        );
-
-      if (!isMatch) {
-        return res.status(400).json({
-          error:
-            "Invalid credentials",
-        });
-      }
-
-      const {
-        password: _,
-        ...userInfo
-      } = user.toObject();
-
-      res.json(userInfo);
-    } catch (error) {
-      console.error(
-        "Error logging in user:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Server error",
+  try {
+    if (!email || !password) {
+      return res.status(400).json({
+        error: "Email and password are required.",
       });
     }
-  }
-);
 
+    const user = await User.findOne({
+      email: email.trim().toLowerCase(),
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        error: "Invalid email or password.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        error: "Invalid email or password.",
+      });
+    }
+
+    // Block login until email verification is complete
+    if (user.isVerified !== true) {
+      return res.status(403).json({
+        error: "Please verify your email before logging in.",
+        requiresEmailVerification: true,
+        email: user.email,
+      });
+    }
+
+    const {
+      password: _,
+      emailVerificationOtpHash: __,
+      emailVerificationOtpExpires: ___,
+      emailVerificationAttempts: ____,
+      ...userInfo
+    } = user.toObject();
+
+    return res.json(userInfo);
+  } catch (error) {
+    console.error("Error logging in user:", error);
+
+    return res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
 
 // =====================================================
 // UPDATE PROFILE PICTURE
@@ -1249,66 +1728,41 @@ app.post(
         "New review saved:",
         newComment
       );
-
+      res.status(201).json(newComment);
       // -----------------------------------------
-      // SEND REVIEW TO N8N
+      // AI REVIEW ANALYSIS (GEMINI)
       // -----------------------------------------
 
       try {
-        const n8nWebhook =
-          process.env
-            .N8N_REVIEW_WEBHOOK_URL;
+        const ai = await analyzeReview(
+          newComment.comments,
+          newComment.rating
+        );
 
-        if (n8nWebhook) {
-          await fetch(
-            n8nWebhook,
-            {
-              method: "POST",
+        await ReviewAnalysis.create({
+          reviewId: newComment._id.toString(),
+          recipeName: newComment.recipeName,
+          username: newComment.username,
+          email: newComment.email,
+          rating: newComment.rating,
+          comments: newComment.comments,
+          sentiment: ai.sentiment,
+          category: ai.category,
+          keywords: ai.keywords,
+          summary: ai.summary,
+          analyzedAt: new Date().toISOString(),
+        });
 
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-
-              body: JSON.stringify({
-                reviewId:
-                  newComment._id.toString(),
-
-                recipeName:
-                  newComment.recipeName,
-
-                username:
-                  newComment.username,
-
-                email:
-                  newComment.email,
-
-                rating:
-                  newComment.rating,
-
-                comments:
-                  newComment.comments,
-
-                createdAt:
-                  newComment.createdAt,
-              }),
-            }
-          );
-
-          console.log(
-            "Review sent to n8n"
-          );
-        }
+        console.log("Review analysis saved");
+        analyzeMissingReviews();
       } catch (error) {
         console.error(
-          "Error sending review to n8n:",
+          "AI analysis failed:",
           error.message
         );
       }
 
-      res.status(201).json(
-        newComment
-      );
+      
     } catch (error) {
       console.error(
         "Error saving review:",
@@ -1888,9 +2342,11 @@ app.post(
             cuisine.trim(),
 
           type:
-            type === "Non-veg"
-              ? "Non-veg"
-              : "Veg",
+  type === "Non-veg"
+    ? "Non-veg"
+    : type === "Desserts"
+    ? "Desserts"
+    : "Veg",
 
           description:
             description || "",
@@ -1925,6 +2381,43 @@ app.post(
         });
 
       await newRecipe.save();
+      
+
+try {
+  const registeredUsers = await User.find(
+    {
+      role: "user",
+      email: { $exists: true, $ne: "" },
+    },
+    { email: 1 }
+  ).lean();
+
+  // Store ONE recipe notification document; each user has their own read status.
+  const recipients = [...new Set(
+    registeredUsers
+      .map((registeredUser) => String(registeredUser.email || "").trim().toLowerCase())
+      .filter(Boolean)
+  )].map((email) => ({ email, status: "pending", isRead: false }));
+
+  if (recipients.length > 0) {
+    await Notification.create({
+      type: "recipe",
+      title: "New Recipe Added!",
+      message: `${newRecipe.name} has been added to Taste of Heaven. Explore the recipe now!`,
+      recipeId: newRecipe._id,
+      recipeName: newRecipe.name,
+      recipeImage: newRecipe.image,
+      cuisine: newRecipe.cuisine,
+      rating: newRecipe.rating || 0,
+      recipients,
+    });
+  }
+
+  console.log(`Created one recipe notification for ${recipients.length} users: ${newRecipe.name}`);
+} catch (notificationError) {
+  console.error("Could not create recipe notification:", notificationError);
+}
+
 
       res.status(201).json({
         message:
@@ -1984,9 +2477,11 @@ app.put(
               cuisine?.trim(),
 
             type:
-              type === "Non-veg"
-                ? "Non-veg"
-                : "Veg",
+  type === "Non-veg"
+    ? "Non-veg"
+    : type === "Desserts"
+    ? "Desserts"
+    : "Veg",
 
             description:
               description || "",
@@ -2171,6 +2666,155 @@ app.use(
     });
   }
 );
+
+const normalizeEmail = (value) =>
+  String(value || "").trim().toLowerCase();
+
+// GET notifications for the logged-in user
+app.get("/api/notifications", async (req, res) => {
+  try {
+    const email = normalizeEmail(req.headers["user-email"]);
+
+    if (!email) {
+      return res.status(401).json({
+        error: "User email is required.",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "Registered user not found.",
+      });
+    }
+
+    const notifications = await Notification.find({
+      "recipients.email": email,
+    })
+      .populate("recipeId", "name image cuisine rating")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Return only the current user's recipient information.
+    const userNotifications = notifications.map((notification) => {
+      const recipient = notification.recipients.find(
+        (item) => item.email.toLowerCase() === email
+      );
+
+      return {
+        ...notification,
+        isRead: recipient?.isRead ?? false,
+        status: recipient?.status ?? "pending",
+      };
+    });
+
+    return res.json(userNotifications);
+  } catch (error) {
+    console.error("Fetch notifications error:", error);
+
+    return res.status(500).json({
+      error: "Unable to fetch notifications.",
+    });
+  }
+});
+
+// Mark a notification as read for the current user only.
+app.patch("/api/notifications/:id/read", async (req, res) => {
+  try {
+    const email = normalizeEmail(req.headers["user-email"]);
+
+    if (!email) {
+      return res.status(401).json({
+        error: "User email is required.",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        error: "Registered user authentication required.",
+      });
+    }
+
+    const notification = await Notification.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        "recipients.email": email,
+      },
+      {
+        $set: {
+          "recipients.$.isRead": true,
+        },
+      },
+      { new: true }
+    ).lean();
+
+    if (!notification) {
+      return res.status(404).json({
+        error: "Notification not found for this user.",
+      });
+    }
+
+    const recipient = notification.recipients.find(
+      (item) => item.email.toLowerCase() === email
+    );
+
+    return res.json({
+      message: "Notification marked as read.",
+      isRead: recipient?.isRead ?? true,
+    });
+  } catch (error) {
+    console.error("Mark notification as read error:", error);
+
+    return res.status(500).json({
+      error: "Unable to mark notification as read.",
+    });
+  }
+});
+
+// Mark every notification belonging to this user as read.
+app.patch(
+  "/api/notifications/read-all",
+  async (req, res) => {
+    try {
+      const email = normalizeEmail(req.headers["user-email"]);
+
+      if (!email || !(await User.findOne({ email }))) {
+        return res.status(401).json({
+          error: "Registered user authentication required.",
+        });
+      }
+
+      const result = await Notification.updateMany(
+        {
+          "recipients.email": email,
+          "recipients.isRead": false,
+        },
+        {
+          $set: { "recipients.$[recipient].isRead": true },
+        },
+        {
+          arrayFilters: [
+            { "recipient.email": email, "recipient.isRead": false },
+          ],
+        }
+      );
+
+      res.json({
+        message: "All notifications marked as read.",
+        modifiedCount: result.modifiedCount,
+      });
+    } catch (error) {
+      console.error("Mark all notifications read error:", error);
+      res.status(500).json({
+        error: "Unable to update notifications.",
+      });
+    }
+  }
+);
+
 
 
 // =====================================================

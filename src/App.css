@@ -12,3 +12,89 @@
   gap: 20px;
   padding: 20px;
 }
+
+/* RECIPES HEADING SECTION */
+.recipes-section {
+  width: 100%;
+  padding: 0 40px 30px;
+  margin-top: 24px;
+  box-sizing: border-box;
+}
+
+/* LEFT-ALIGNED ANIMATED HEADING */
+.recipes-heading {
+  margin: 0 0 24px;
+  color: #073f30;
+  font-family: Inter, "Segoe UI", sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  text-align: left;
+  letter-spacing: -0.5px;
+
+  /* Animation */
+  opacity: 0;
+  animation: recipesSlideIn 0.8s ease-out forwards;
+}
+
+/* Animated green underline */
+.recipes-heading::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #073f30, #f49b36);
+  animation: recipesUnderline 0.7s ease-out 0.4s forwards;
+}
+
+/* Heading slides in from the left */
+@keyframes recipesSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-35px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Underline expands smoothly */
+@keyframes recipesUnderline {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 85px;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 560px) {
+  .recipes-section {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .recipes-heading {
+    font-size: 25px;
+    margin-bottom: 18px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .recipes-heading,
+  .recipes-heading::after {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .recipes-heading::after {
+    width: 85px;
+  }
+}

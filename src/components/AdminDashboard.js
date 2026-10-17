@@ -406,7 +406,7 @@ const AdminDashboard = ({ user, onRecipesChanged }) => {
       errors.cuisine = "Cuisine is required.";
     }
 
-    if (!["Veg", "Non-veg"].includes(recipeForm.type)) {
+    if (!["Veg", "Non-veg","Desserts"].includes(recipeForm.type)) {
       errors.type = "Please select a recipe type.";
     }
 
@@ -1052,15 +1052,19 @@ const AdminDashboard = ({ user, onRecipesChanged }) => {
     const displayType = getRecipeTypeFromName(recipe.name);
 
     return (
-      <span
-        className={
-          displayType === "Non-veg"
-            ? "type-badge nonveg"
-            : "type-badge veg"
-        }
-      >
-        {displayType}
-      </span>
+      <td>
+  <span
+    className={`type-badge ${
+      recipe.type === "Non-veg"
+        ? "nonveg"
+        : recipe.type === "Desserts"
+        ? "desserts"
+        : "veg"
+    }`}
+  >
+    {recipe.type || "Veg"}
+  </span>
+</td>
     );
   })()}
 </td>
@@ -1396,6 +1400,17 @@ const AdminDashboard = ({ user, onRecipesChanged }) => {
                       />
                       <span>Non-veg</span>
                     </label>
+                    <label className="radio-label">
+  <input
+    type="radio"
+    name="type"
+    value="Desserts"
+    checked={recipeForm.type === "Desserts"}
+    onChange={handleRecipeChange}
+  />
+  <span>Desserts</span>
+</label>
+                    
                   </div>
                   {fieldError("type")}
                 </div>

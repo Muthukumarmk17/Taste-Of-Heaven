@@ -634,3 +634,496 @@
     border-radius: 28px;
   }
 }
+
+/* =========================================
+   TASTE OF HEAVEN - OTP VERIFICATION
+   Add this at the bottom of Auth.css
+========================================= */
+
+/* Email address shown on verification screen */
+.auth-page .otp-email {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 calc(var(--u) * 24);
+  padding: calc(var(--u) * 15);
+  border: 1px solid #d5eadb;
+  border-radius: calc(var(--u) * 14);
+  background: #eff9f1;
+  color: #08733f;
+  font-size: calc(var(--u) * 17);
+  font-weight: 700;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* OTP input */
+.auth-page .auth-input-wrapper input#otp {
+  padding: 0 calc(var(--u) * 18);
+  color: #075b35;
+  font-size: calc(var(--u) * 26);
+  font-weight: 700;
+  letter-spacing: calc(var(--u) * 10);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.auth-page .auth-input-wrapper input#otp::placeholder {
+  color: #98a3ad;
+  font-size: calc(var(--u) * 15);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.auth-page .auth-input-wrapper input#otp:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.12);
+}
+
+/* Verification screen spacing */
+.auth-page--signup .auth-card:has(#otp) .auth-subtitle-small {
+  margin-bottom: calc(var(--u) * 18);
+}
+
+.auth-page--signup .auth-card:has(#otp) .auth-form-group {
+  margin-bottom: calc(var(--u) * 20);
+}
+
+/* Button spacing */
+.auth-page--signup .auth-card:has(#otp) .auth-submit-button {
+  margin-top: calc(var(--u) * 8);
+}
+
+/* Verification screen on mobile */
+@media (max-width: 600px) {
+  .auth-page .auth-input-wrapper input#otp {
+    font-size: 24px;
+    letter-spacing: 8px;
+  }
+
+  .auth-page .otp-email {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+/* =====================================
+   GOOGLE SIGN-IN OTP STYLING
+   ===================================== */
+
+/* Six-digit Google OTP input */
+.auth-page .auth-input-wrapper input#google-otp {
+  padding: 0 18px;
+  color: #075b35;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 10px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.auth-page .auth-input-wrapper input#google-otp::placeholder {
+  color: #98a3ad;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.auth-page .auth-input-wrapper input#google-otp:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.12);
+}
+
+/* Back to Sign In button */
+.auth-page .auth-text-button {
+  display: inline;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #07803f;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.auth-page .auth-text-button:hover {
+  color: #045f31;
+}
+
+/* Google OTP screen spacing */
+.auth-page .auth-card:has(#google-otp) .auth-subtitle-small {
+  margin-bottom: calc(var(--u) * 18);
+}
+
+.auth-page .auth-card:has(#google-otp) .auth-form-group {
+  margin-bottom: calc(var(--u) * 20);
+}
+
+.auth-page .auth-card:has(#google-otp) .auth-submit-button {
+  margin-top: calc(var(--u) * 8);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .auth-page .auth-input-wrapper input#google-otp {
+    font-size: 24px;
+    letter-spacing: 8px;
+  }
+}
+/* ==========================================
+   TASTE OF HEAVEN - VERIFY EMAIL OTP DESIGN
+   ========================================== */
+
+.auth-page .auth-card--google-otp {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 24px 30px 25px;
+  box-sizing: border-box;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #fffefb, #f8f7f0);
+  text-align: center;
+  box-shadow: 0 12px 35px rgba(15, 62, 39, 0.08);
+}
+
+/* Leaf decoration */
+.auth-card--google-otp .auth-card-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 34px;
+  margin: 0 0 12px;
+}
+
+.auth-card--google-otp .auth-card-decoration span {
+  display: block;
+  width: 96px;
+  height: 2px;
+  background: linear-gradient(90deg, #e2eee4, #168747);
+}
+
+.auth-card--google-otp .auth-card-decoration svg {
+  color: #188b39;
+  font-size: 34px;
+}
+
+/* Heading */
+.auth-card--google-otp h2 {
+  margin: 0 0 12px;
+  color: #064532;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Verification message */
+.auth-card--google-otp .auth-otp-intro {
+  margin: 0 0 3px;
+  color: #344256;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-card--google-otp .auth-otp-email {
+  margin: 0 0 21px;
+  color: #005b34;
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* Six separate OTP boxes */
+.auth-card--google-otp .auth-otp-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.auth-card--google-otp .auth-otp-digit {
+  width: 54px;
+  height: 60px;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid #cbd5d1;
+  border-radius: 10px;
+  outline: none;
+  box-sizing: border-box;
+  background: #fff;
+  color: #064b35;
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-card--google-otp .auth-otp-digit:focus {
+  border-color: #168747;
+  box-shadow: 0 0 0 3px rgba(22, 135, 71, 0.13);
+}
+
+/* Instruction below OTP boxes */
+.auth-card--google-otp .auth-otp-help {
+  margin: 15px 0 20px;
+  color: #48586b;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Verify Code button */
+.auth-card--google-otp .auth-otp-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 18px;
+  border: 1px solid #07883d;
+  border-radius: 12px;
+  background: linear-gradient(105deg, #187d58, #258d24);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(15, 117, 58, 0.15);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.auth-card--google-otp .auth-otp-submit:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.auth-card--google-otp .auth-otp-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* OR divider */
+.auth-card--google-otp .auth-otp-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 19px 0 17px;
+}
+
+.auth-card--google-otp .auth-otp-divider span {
+  flex: 1;
+  height: 1px;
+  background: #d6ddd8;
+}
+
+.auth-card--google-otp .auth-otp-divider strong {
+  color: #596777;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Back to Sign In */
+.auth-card--google-otp .auth-otp-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #005b34;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-card--google-otp .auth-otp-back:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.auth-card--google-otp .auth-error {
+  margin: 0 0 14px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Responsive mobile layout */
+@media (max-width: 480px) {
+  .auth-page .auth-card--google-otp {
+    padding: 22px 18px 24px;
+    border-radius: 22px;
+  }
+
+  .auth-card--google-otp h2 {
+    font-size: 28px;
+  }
+
+  .auth-card--google-otp .auth-otp-boxes {
+    gap: 7px;
+  }
+
+  .auth-card--google-otp .auth-otp-digit {
+    flex: 1;
+    width: auto;
+    max-width: 48px;
+    height: 53px;
+    font-size: 23px;
+  }
+
+  .auth-card--google-otp .auth-card-decoration span {
+    width: 75px;
+  }
+}
+
+/* =========================================
+   SIGNUP EMAIL OTP
+   Reuse the Google sign-in OTP design
+========================================= */
+
+.auth-page--signup .auth-card--google-otp {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-intro {
+  margin: 0 0 8px;
+  color: #344256;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-email {
+  margin: 0 0 21px;
+  color: #005b34;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-digit {
+  width: 54px;
+  height: 60px;
+  box-sizing: border-box;
+  border: 1px solid #d8dfd8;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #174b32;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-digit:focus {
+  border-color: #187447;
+  box-shadow: 0 0 0 3px rgba(24, 116, 71, 0.12);
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-digit:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-help {
+  margin: 10px 0 20px;
+  color: #697568;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 9px;
+  background: #176b43;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-submit:hover:not(:disabled) {
+  background: #105535;
+  transform: translateY(-1px);
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+  color: #879087;
+  font-size: 12px;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-divider span {
+  flex: 1;
+  height: 1px;
+  background: #e1e6e1;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-divider strong {
+  font-weight: 600;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-back {
+  display: block;
+  color: #176b43;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.auth-page--signup .auth-card--google-otp .auth-otp-back:hover {
+  color: #105535;
+  text-decoration: underline;
+}
+
+/* Responsive OTP boxes */
+@media (max-width: 480px) {
+  .auth-page--signup .auth-card--google-otp {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .auth-page--signup .auth-card--google-otp .auth-otp-boxes {
+    gap: 7px;
+  }
+
+  .auth-page--signup .auth-card--google-otp .auth-otp-digit {
+    width: 42px;
+    height: 50px;
+    font-size: 21px;
+  }
+}

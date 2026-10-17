@@ -1,673 +1,405 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import React, { useState, useEffect, useRef } from "react";
 import {
-  faHouseChimney,
-  faUtensils,
-  faFilter,
-  faSearch,
-  faRightFromBracket,
-  faChevronDown,
-  faUserGear,
-  faLeaf,
-  faDrumstickBite,
-  faStar,
-  faRotate,
-} from "@fortawesome/free-solid-svg-icons";
-
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import "./TopBar.css";
+import NotificationBell from "./NotificationBell";
 
 function TopBar({
   user,
   onLogout,
   onCuisineSelect,
   onRatingSelect,
-  onTypeSelect,
   onSearch,
+  onTypeSelect,
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // =====================================================
-  // STATES
-  // =====================================================
+  const pendingRecipeScroll = useRef(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [cuisineOpen, setCuisineOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
+  // CHANGE NAVBAR APPEARANCE WHEN SCROLLING
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
 
-  // =====================================================
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // SCROLL TO RECIPES AFTER NAVIGATION TO HOME
+  useEffect(() => {
+    if (
+      location.pathname !== "/" ||
+      !pendingRecipeScroll.current
+    ) {
+      return;
+    }
+
+    pendingRecipeScroll.current = false;
+
+    let secondFrame;
+
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => {
+        const recipePanel =
+          document.getElementById("recipe-results");
+
+        if (recipePanel) {
+          recipePanel.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+
+      if (secondFrame) {
+        cancelAnimationFrame(secondFrame);
+      }
+    };
+  }, [location.pathname]);
+
+  // NAVIGATE TO HOME AND SHOW RECIPES
+  const goToRecipes = () => {
+    setCuisineOpen(false);
+    setFilterOpen(false);
+
+    if (location.pathname !== "/") {
+      pendingRecipeScroll.current = true;
+      navigate("/");
+      return;
+    }
+
+    pendingRecipeScroll.current = false;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById("recipe-results")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    });
+  };
+
   // SEARCH
-  // =====================================================
-
-  const handleSearchChange = (event) => {
-
-    const term = event.target.value;
-
-    setSearchTerm(term);
+  const changeSearch = (event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
 
     if (onSearch) {
-      onSearch(term);
+      onSearch(value);
     }
   };
 
+  // RESET FILTERS AND GO HOME
+  // RESET FILTERS AND GO HOME
+const resetHome = () => {
+  setCuisineOpen(false);
+  setFilterOpen(false);
+  setSearchTerm("");
 
-  // =====================================================
-  // HOME
-  // =====================================================
+  // Cancel any pending scroll to recipes
+  pendingRecipeScroll.current = false;
 
-  const handleHomeClick = () => {
+  // Reset filters
+  onCuisineSelect?.("");
+  onRatingSelect?.(null);
+  onTypeSelect?.("");
+  onSearch?.("");
 
+  // Navigate home if on another page
+  if (location.pathname !== "/") {
+    navigate("/", { replace: false });
+  }
+
+  // Return to the top after navigation/rendering
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    });
+  });
+};
+
+  // CUISINE FILTER
+  const chooseCuisine = (value) => {
     if (onCuisineSelect) {
-      onCuisineSelect("");
+      onCuisineSelect(value);
     }
 
-    if (onRatingSelect) {
-      onRatingSelect(null);
-    }
-
-    if (onTypeSelect) {
-      onTypeSelect("");
-    }
-
-    setSearchTerm("");
-
-    if (onSearch) {
-      onSearch("");
-    }
-
-    setCuisineOpen(false);
-    setFilterOpen(false);
+    goToRecipes();
   };
 
-
-  // =====================================================
-  // CUISINE
-  // =====================================================
-
-  const handleCuisineClick = (cuisine) => {
-
-    if (onCuisineSelect) {
-      onCuisineSelect(cuisine);
-    }
-
-    setCuisineOpen(false);
-  };
-
-
-  // =====================================================
   // RATING FILTER
-  // =====================================================
-
-  const handleRatingClick = (rating) => {
-
+  const chooseRating = (value) => {
     if (onRatingSelect) {
-      onRatingSelect(rating);
+      onRatingSelect(value);
     }
 
-    setFilterOpen(false);
+    goToRecipes();
   };
 
-
-  // =====================================================
-  // VEG / NON-VEG FILTER
-  // =====================================================
-
-  const handleTypeClick = (type) => {
-
-    if (onTypeSelect) {
-      onTypeSelect(type);
-    }
-
-    setFilterOpen(false);
-  };
-
-
-  // =====================================================
-  // ALL RECIPES
-  // =====================================================
-
-  const handleAllRecipesClick = () => {
-
-    if (onCuisineSelect) {
-      onCuisineSelect("");
-    }
-
-    if (onRatingSelect) {
-      onRatingSelect(null);
-    }
-
-    if (onTypeSelect) {
-      onTypeSelect("");
-    }
-
-    setSearchTerm("");
-
-    if (onSearch) {
-      onSearch("");
-    }
-
-    setFilterOpen(false);
-    setCuisineOpen(false);
-  };
-
-
-  // =====================================================
   // LOGOUT
-  // =====================================================
-
-  const handleLogout = () => {
-
-    localStorage.removeItem("user");
-
+  const logout = () => {
     if (onLogout) {
       onLogout();
     }
+
+    pendingRecipeScroll.current = false;
+    navigate("/");
   };
 
-
-  // =====================================================
-  // UI
-  // =====================================================
-
   return (
-
-    <header className="top-bar">
-
-      {/* =================================================
-          DECORATIVE LEAVES - LEFT
-      ================================================= */}
-
-      <div
-        className="header-leaves header-leaves-left"
-        aria-hidden="true"
+    <header
+      className={`th-header ${
+        scrolled ? "th-header-scrolled" : ""
+      }`}
+    >
+      {/* BRAND LOGO */}
+      <Link
+        to="/"
+        className="th-brand"
+        onClick={resetHome}
+        aria-label="Taste of Heaven home"
       >
+        <img
+          src="/taste-of-heaven-logo.png"
+          alt="Taste of Heaven"
+          className="th-brand-logo"
+          onError={(event) => {
+            event.currentTarget.style.display = "none";
 
-        <span className="leaf leaf-1"></span>
-        <span className="leaf leaf-2"></span>
-        <span className="leaf leaf-3"></span>
-        <span className="leaf leaf-4"></span>
+            const fallback =
+              event.currentTarget.nextElementSibling;
 
-      </div>
+            if (fallback) {
+              fallback.style.display = "block";
+            }
+          }}
+        />
 
+        <span
+          className="th-brand-fallback"
+          style={{ display: "none" }}
+        >
+          <strong>
+            Taste of <em>Heaven</em>
+          </strong>
+          <small>FOOD · RECIPES · COMMUNITY</small>
+        </span>
+      </Link>
 
-      {/* =================================================
-          DECORATIVE LEAVES - RIGHT
-      ================================================= */}
-
-      <div
-        className="header-leaves header-leaves-right"
-        aria-hidden="true"
-      >
-
-        <span className="leaf leaf-5"></span>
-        <span className="leaf leaf-6"></span>
-        <span className="leaf leaf-7"></span>
-
-      </div>
-
-
-      {/* =================================================
-          BRAND
-      ================================================= */}
-
-      <div className="brand-section">
-
-        <div className="brand-logo">
-
-          <div className="chef-logo">
-
-            <div className="chef-hat">
-              ♨
-            </div>
-
-          </div>
-
-
-          <div className="brand-text">
-
-            <h1>
-              TASTE OF <span>HEAVEN</span>
-            </h1>
-
-            <p>
-              RECIPES FOR A HAPPIER YOU
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      {/* =================================================
-          NAVIGATION
-      ================================================= */}
-
-      <nav className="nav-container">
-
-
-        {/* =================================================
-            HOME
-        ================================================= */}
-
+      {/* NAVIGATION */}
+      <nav className="th-nav" aria-label="Main navigation">
+        {/* HOME */}
         <Link
           to="/"
-          className="nav-home"
-          onClick={handleHomeClick}
+          className="th-home-link"
+          onClick={resetHome}
         >
-
-          <FontAwesomeIcon icon={faHouseChimney} />
-
-          <span>
-            Home
-          </span>
-
+          <span>Home</span>
         </Link>
 
-
-        {/* =================================================
-            CUISINE
-        ================================================= */}
-
-        <div className="nav-dropdown">
-
+        {/* CUISINE DROPDOWN */}
+        <div className="th-menu">
           <button
             type="button"
-            className="nav-button"
+            className="th-nav-button"
+            aria-expanded={cuisineOpen}
             onClick={() => {
-
-              setCuisineOpen(
-                (previous) => !previous
-              );
-
+              setCuisineOpen((value) => !value);
               setFilterOpen(false);
-
             }}
           >
-
-            <FontAwesomeIcon
-              icon={faUtensils}
-            />
-
-            <span>
-              Cuisine
-            </span>
-
-            <FontAwesomeIcon
-              icon={faChevronDown}
+            <span>Cuisine</span>
+            <span
               className={
                 cuisineOpen
-                  ? "dropdown-arrow rotate"
-                  : "dropdown-arrow"
+                  ? "th-chevron is-open"
+                  : "th-chevron"
               }
-            />
-
+              aria-hidden="true"
+            >
+              ▾
+            </span>
           </button>
-
 
           {cuisineOpen && (
-
-            <div className="dropdown-content cuisine-dropdown">
-
-              <button
-                type="button"
-                onClick={() =>
-                  handleCuisineClick("Indian")
-                }
-              >
-                🍛 Indian
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  handleCuisineClick("Italian")
-                }
-              >
-                🍝 Italian
-              </button>
+            <div className="th-dropdown">
+              {["Indian", "Italian", "Chinese"].map((item) => (
+                <button
+                  type="button"
+                  key={item}
+                  onClick={() => chooseCuisine(item)}
+                >
+                  {item}
+                </button>
+              ))}
 
               <button
                 type="button"
-                onClick={() =>
-                  handleCuisineClick("Chinese")
-                }
+                onClick={() => chooseCuisine("")}
               >
-                🥢 Chinese
+                All cuisines
               </button>
-
             </div>
-
           )}
-
         </div>
 
-
-        {/* =================================================
-            FILTER
-        ================================================= */}
-
-        <div className="nav-dropdown">
-
+        {/* RATING FILTER DROPDOWN */}
+        <div className="th-menu">
           <button
             type="button"
-            className={
-              filterOpen
-                ? "nav-button filter-active"
-                : "nav-button"
-            }
+            className="th-nav-button"
+            aria-expanded={filterOpen}
             onClick={() => {
-
-              setFilterOpen(
-                (previous) => !previous
-              );
-
+              setFilterOpen((value) => !value);
               setCuisineOpen(false);
-
             }}
           >
-
-            <FontAwesomeIcon
-              icon={faFilter}
-            />
-
-            <span>
-              Filter
-            </span>
-
-            <FontAwesomeIcon
-              icon={faChevronDown}
+            <span>Filter</span>
+            <span
               className={
                 filterOpen
-                  ? "dropdown-arrow rotate"
-                  : "dropdown-arrow"
+                  ? "th-chevron is-open"
+                  : "th-chevron"
               }
-            />
-
+              aria-hidden="true"
+            >
+              ▾
+            </span>
           </button>
-
 
           {filterOpen && (
-
-            <div className="dropdown-content filter-dropdown">
-
-
-              {/* =================================================
-                  VEG
-              ================================================= */}
+            <div className="th-dropdown">
+              <button
+                type="button"
+                onClick={() => chooseRating(5)}
+              >
+                5 Star
+              </button>
 
               <button
                 type="button"
-                className="filter-option veg-option"
-                onClick={() =>
-                  handleTypeClick("Veg")
-                }
+                onClick={() => chooseRating(4)}
               >
-
-                <FontAwesomeIcon
-                  icon={faLeaf}
-                  className="filter-option-icon"
-                />
-
-                <span>
-                  Veg
-                </span>
-
+                4 Star
               </button>
-
-
-              {/* =================================================
-                  NON VEG
-              ================================================= */}
 
               <button
                 type="button"
-                className="filter-option nonveg-option"
-                onClick={() =>
-                  handleTypeClick("Non-veg")
-                }
+                onClick={() => chooseRating(3)}
               >
-
-                <FontAwesomeIcon
-                  icon={faDrumstickBite}
-                  className="filter-option-icon"
-                />
-
-                <span>
-                  Non-veg
-                </span>
-
+                3 Star
               </button>
-
-
-              <div className="dropdown-separator"></div>
-
-
-              {/* =================================================
-                  5 STAR
-              ================================================= */}
 
               <button
                 type="button"
-                className="filter-option rating-option"
-                onClick={() =>
-                  handleRatingClick(5)
-                }
+                onClick={() => chooseRating(null)}
               >
-
-                <FontAwesomeIcon
-                  icon={faStar}
-                  className="filter-star-icon"
-                />
-
-                <span>
-                  5 Star
-                </span>
-
+                All ratings
               </button>
-
-
-              {/* =================================================
-                  4 STAR
-              ================================================= */}
-
-              <button
-                type="button"
-                className="filter-option rating-option"
-                onClick={() =>
-                  handleRatingClick(4)
-                }
-              >
-
-                <FontAwesomeIcon
-                  icon={faStar}
-                  className="filter-star-icon"
-                />
-
-                <span>
-                  4 Star
-                </span>
-
-              </button>
-
-
-              <div className="dropdown-separator"></div>
-
-
-              {/* =================================================
-                  ALL RECIPES
-              ================================================= */}
-
-              <button
-                type="button"
-                className="filter-option all-option"
-                onClick={handleAllRecipesClick}
-              >
-
-                <FontAwesomeIcon
-                  icon={faRotate}
-                  className="filter-all-icon"
-                />
-
-                <span>
-                  All Recipes
-                </span>
-
-              </button>
-
             </div>
-
           )}
-
         </div>
-
       </nav>
 
-
-      {/* =================================================
-          SEARCH
-      ================================================= */}
-
-      <div className="search-container">
-
-        <FontAwesomeIcon
-          icon={faSearch}
-          className="search-icon"
-        />
+      {/* SEARCH BAR WITH ICON */}
+      <label className="th-header-search">
+        <svg
+          className="th-search-svg"
+          xmlns="http://www.w3.org/2000/svg"
+          width="21"
+          height="21"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-4-4" />
+        </svg>
 
         <input
-          type="text"
-          className="search-input"
-          placeholder="Search recipes, ingredients..."
+          type="search"
           value={searchTerm}
-          onChange={handleSearchChange}
+          onChange={changeSearch}
+          placeholder="Search recipes, ingredients..."
+          aria-label="Search recipes and ingredients"
         />
+      </label>
 
-      </div>
+      {/* USER ACCOUNT */}
+      <div className="th-account">
+        <NotificationBell user={user} />
 
-
-      {/* =================================================
-          RIGHT SIDE
-      ================================================= */}
-
-      {user?.role === "admin" ? (
-
-        <div className="profile-section">
-
-
-          {/* =================================================
-              ADMIN
-          ================================================= */}
-
-          <Link
-            to="/admin"
-            className="admin-link"
-          >
-
-            <FontAwesomeIcon
-              icon={faUserGear}
-            />
-
-            <span>
-              Admin
-            </span>
-
+        {user?.role === "admin" ? (
+          <Link to="/admin" className="th-profile-link">
+            <span>Admin Dashboard</span>
           </Link>
-
-
-          {/* =================================================
-              SIGN OUT
-          ================================================= */}
-
-          <button
-            type="button"
-            className="logout-button"
-            onClick={handleLogout}
-          >
-
-            <FontAwesomeIcon
-              icon={faRightFromBracket}
-            />
-
-            <span>
-              Sign Out
-            </span>
-
-          </button>
-
-        </div>
-
-      ) : user ? (
-
-        <div className="profile-section">
-
-
-          {/* =================================================
-              USER PROFILE
-          ================================================= */}
-
-          <Link
-            to="/profile"
-            className="profile-link"
-          >
-
+        ) : user ? (
+          <Link to="/profile" className="th-profile-link">
             <img
               src={
                 user.profilePicture ||
                 "/default-profile.png"
               }
-              alt="Profile"
-              className="profile-image"
+              alt=""
+              className="th-avatar"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src =
+                  "/default-profile.png";
+              }}
             />
 
-            <span className="username">
-              {user.username}
+            <span className="th-username">
+              {user.username || "Profile"}
             </span>
-
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              className="profile-arrow"
-            />
-
           </Link>
+        ) : (
+          <Link to="/login" className="th-login">
+            Login
+          </Link>
+        )}
 
-
-          {/* =================================================
-              SIGN OUT
-          ================================================= */}
-
+        {user && (
           <button
             type="button"
-            className="logout-button"
-            onClick={handleLogout}
+            className="th-signout"
+            onClick={logout}
           >
-
-            <FontAwesomeIcon
-              icon={faRightFromBracket}
-            />
-
-            <span>
-              Sign Out
-            </span>
-
+            <span>Sign Out</span>
           </button>
-
-        </div>
-
-      ) : (
-
-        <Link
-          to="/login"
-          className="login-button"
-        >
-          Login
-        </Link>
-
-      )}
-
+        )}
+      </div>
     </header>
   );
 }

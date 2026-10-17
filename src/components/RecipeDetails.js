@@ -13,6 +13,7 @@ import {
   FaRegHeart,
   FaStar,
   FaTrash,
+  FaDownload,
 } from "react-icons/fa";
 
 import axios from "axios";
@@ -21,6 +22,7 @@ import API_BASE_URL from "../api";
 import ReviewForm from "./ReviewForm";
 
 import LikeAnimation from "./LikeAnimation";
+import { downloadRecipe } from "../utils/downloadRecipe";
 
 import "./RecipeDetails.css";
 
@@ -35,18 +37,14 @@ function RecipeDetails({
 
   const navigate =
     useNavigate();
-
-    // ==================================================
-// SCROLL TO TOP WHEN RECIPE DETAILS OPENS
-// ==================================================
-
-useEffect(() => {
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "instant",
-  });
-}, [name]);
+    // Scroll to the top whenever a recipe details page opens
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [name]);
 
 
   // ==================================================
@@ -691,36 +689,32 @@ useEffect(() => {
 
 
            <div className="vegetarian-badge">
-  {(() => {
-    const recipeName = String(recipe.name || "").trim();
+              {(() => {
+                const recipeName = String(recipe.name || "").trim();
+                const normalizedType = String(recipe.type || "")
+                  .trim()
+                  .toLowerCase()
+                  .replace(/[_\s]+/g, "-");
 
-    // 1. Check type written inside the recipe name brackets
-    const bracketMatch = recipeName.match(/\(([^()]*)\)\s*$/);
+                // An explicit (Veg)/(Non-veg) suffix in the name overrides a conflicting type.
+                const bracketMatch = recipeName.match(/\(([^()]*)\)\s*$/);
+                const nameLabel = bracketMatch ? bracketMatch[1].trim().toLowerCase() : "";
+                const nameSaysNonVeg = ["non-veg", "non veg", "nonveg", "non-vegetarian", "nonvegetarian"].includes(nameLabel);
+                const nameSaysVeg = ["veg", "vegetarian"].includes(nameLabel) && !nameSaysNonVeg;
 
-    const typeFromName = bracketMatch
-      ? bracketMatch[1].trim().toLowerCase()
-      : "";
+                const typeIsDessert = ["dessert", "desserts"].includes(normalizedType);
+                const typeIsVeg = ["veg", "vegetarian"].includes(normalizedType);
+                const typeIsNonVeg = ["non-veg", "nonveg", "non-vegetarian", "nonvegetarian"].includes(normalizedType);
+                const nameIsDessert = /\b(dessert|tiramisu|brownies?|cake|ice cream|pudding|cheesecake|cookies?|pastry)\b/i.test(recipeName);
 
-    // 2. Check recipe.type
-    const typeFromRecipe = String(recipe.type || "")
-      .trim()
-      .toLowerCase();
-
-    // 3. Use bracket type first, otherwise recipe.type
-    const finalType = typeFromName || typeFromRecipe;
-
-    const isNonVeg =
-      finalType === "non-veg" ||
-      finalType === "non veg" ||
-      finalType === "nonveg" ||
-      finalType === "non-vegetarian" ||
-      finalType === "nonvegetarian";
-
-    return isNonVeg
-      ? "🍗 Non-Vegetarian"
-      : "🌿 Vegetarian";
-  })()}
-</div>
+                if (nameSaysNonVeg) return "🍗 Non-veg";
+                if (nameSaysVeg) return "🌿 Veg";
+                if (typeIsDessert || (!normalizedType && nameIsDessert)) return "🍰 Dessert";
+                if (typeIsNonVeg) return "🍗 Non-veg";
+                if (typeIsVeg) return "🌿 Veg";
+                return "Unknown";
+              })()}
+            </div>
 
           </div>
 
@@ -790,6 +784,27 @@ useEffect(() => {
 
 
             </div>
+            
+<div className="download-recipe-wrapper">
+  <span
+    className="download-recipe-icon"
+    role="button"
+    tabIndex={0}
+    title="Download recipe as PDF"
+    aria-label="Download recipe as PDF"
+    onClick={() => downloadRecipe(recipe)}
+    onKeyDown={(event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        downloadRecipe(recipe);
+      }
+    }}
+  >
+    <FaDownload />
+  </span>
+</div>
+
+           
 
 
           </div>
@@ -889,7 +904,7 @@ useEffect(() => {
 
                     <span className="ingredient-dot">
 
-                      •
+                       {index + 1}
 
                     </span>
 

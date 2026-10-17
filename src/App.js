@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 import {
   BrowserRouter as Router,
   Route,
@@ -15,20 +17,88 @@ import SignUp from "./components/SignUp";
 import ProfilePage from "./components/ProfilePage";
 import ReviewForm from "./components/ReviewForm";
 import AdminDashboard from "./components/AdminDashboard";
+import HomeHero from "./components/HomeHero";
 
 import "./App.css";
 
 // =====================================================
 // API BASE URL
-// Local development:
-//   http://localhost:5000
-//
-// Production / Vercel:
-//   REACT_APP_API_URL will be set in Vercel
 // =====================================================
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+// =====================================================
+// RECIPE CATEGORY DETECTION
+// 1. Use database type/category when recognized.
+// 2. Otherwise, classify using the recipe name.
+// =====================================================
+
+const getRecipeType = (recipe) => {
+  const normalize = (value) =>
+    String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_\s]+/g, "-");
+
+  const recipeName = String(recipe?.name || "").trim();
+  const type = normalize(recipe?.type);
+  const category = normalize(recipe?.category);
+
+  const vegTypes = ["veg", "vegetarian"];
+  const nonVegTypes = [
+    "non-veg",
+    "nonveg",
+    "non-vegetarian",
+    "nonvegetarian",
+  ];
+  const dessertTypes = ["dessert", "desserts"];
+
+  // STEP 1: Non-veg takes priority over Veg.
+  const bracketMatch = recipeName.match(/\(([^()]*)\)\s*$/);
+
+  const nameLabel = bracketMatch
+    ? bracketMatch[1].trim().toLowerCase().replace(/\s+/g, " ")
+    : "";
+
+  const nameIsNonVeg = [
+    "non-veg",
+    "non veg",
+    "nonveg",
+    "non-vegetarian",
+    "non vegetarian",
+    "nonvegetarian",
+  ].includes(nameLabel);
+
+  if (
+    nonVegTypes.includes(type) ||
+    nonVegTypes.includes(category) ||
+    nameIsNonVeg
+  ) {
+    return "Non-veg";
+  }
+
+  // STEP 2: Check the remaining database types.
+  if (vegTypes.includes(type)) return "Veg";
+  if (dessertTypes.includes(type)) return "Dessert";
+
+  if (vegTypes.includes(category)) return "Veg";
+  if (dessertTypes.includes(category)) return "Dessert";
+
+  // STEP 3: Identify Veg from the recipe name.
+  if (["veg", "vegetarian"].includes(nameLabel)) {
+    return "Veg";
+  }
+
+  
+
+  return "Unknown";
+};
+
+
+// =====================================================
+// APP
+// =====================================================
 
 function App() {
   // =====================================================
@@ -36,9 +106,13 @@ function App() {
   // =====================================================
 
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem("user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      console.error("Error reading saved user:", error);
+      return null;
+    }
   });
 
   // =====================================================
@@ -46,29 +120,25 @@ function App() {
   // =====================================================
 
   const [recipes, setRecipes] = useState([]);
-
   const [selectedCuisine, setSelectedCuisine] = useState("");
-
   const [selectedRating, setSelectedRating] = useState(null);
-
-  // "Veg" | "Non-veg" | ""
   const [selectedType, setSelectedType] = useState("");
-
   const [searchTerm, setSearchTerm] = useState("");
 
   // =====================================================
   // FETCH RECIPES
-  // NEW: reusable function so AdminDashboard can
-  // refresh the home page after add / edit / delete
   // =====================================================
 
   const fetchRecipes = () => {
     axios
       .get(`${API_BASE_URL}/recipes`)
       .then((response) => {
-        console.log("Recipes:", response.data);
+        const data = Array.isArray(response.data)
+          ? response.data
+          : [];
 
-        setRecipes(response.data);
+        console.log("Recipes:", data);
+        setRecipes(data);
       })
       .catch((error) => {
         console.error("Error fetching recipes:", error);
@@ -99,7 +169,6 @@ function App() {
     console.log("Logged in user:", userData);
 
     setUser(userData);
-
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
@@ -117,7 +186,7 @@ function App() {
   // =====================================================
 
   const handleCuisineSelect = (cuisine) => {
-    setSelectedCuisine(cuisine);
+    setSelectedCuisine(cuisine || "");
   };
 
   // =====================================================
@@ -129,11 +198,34 @@ function App() {
   };
 
   // =====================================================
-  // VEG / NON-VEG FILTER
+  // CATEGORY FILTER
   // =====================================================
 
   const handleTypeSelect = (type) => {
-    setSelectedType(type);
+    const normalizedType = String(type || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_\s]+/g, "-");
+
+    if (["veg", "vegetarian"].includes(normalizedType)) {
+      setSelectedType("Veg");
+    } else if (
+      [
+        "non-veg",
+        "nonveg",
+        "non-vegetarian",
+        "nonvegetarian",
+      ].includes(normalizedType)
+    ) {
+      setSelectedType("Non-veg");
+    } else if (
+      ["dessert", "desserts"].includes(normalizedType)
+    ) {
+      setSelectedType("Dessert");
+    } else {
+      // An empty value clears the category filter.
+      setSelectedType("");
+    }
   };
 
   // =====================================================
@@ -141,12 +233,11 @@ function App() {
   // =====================================================
 
   const handleSearch = (term) => {
-    setSearchTerm(term);
+    setSearchTerm(term || "");
   };
 
   // =====================================================
-  // PROFILE PICTURE
-  // SAVE TO MONGODB
+  // PROFILE PICTURE - SAVE TO MONGODB
   // =====================================================
 
   const handleProfilePictureSelect = async (picture) => {
@@ -166,7 +257,6 @@ function App() {
       const updatedUser = response.data.user;
 
       setUser(updatedUser);
-
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       console.log(
@@ -174,10 +264,7 @@ function App() {
         updatedUser.profilePicture
       );
     } catch (error) {
-      console.error(
-        "Error updating profile picture:",
-        error
-      );
+      console.error("Error updating profile picture:", error);
 
       alert(
         error.response?.data?.error ||
@@ -187,56 +274,44 @@ function App() {
   };
 
   // =====================================================
-  // VEG CHECK (from the recipe name)
-  // Same rule as the badge in RecipePanel
-  // =====================================================
-
-  const isVegRecipe = (name = "") => {
-    const isNonVegName =
-      /\bnon[\s_-]?veg\b/i.test(name);
-
-    const isVegName =
-      /\bveg\b/i.test(name);
-
-    return isVegName && !isNonVegName;
-  };
-
-  // =====================================================
   // FILTER RECIPES
   // =====================================================
 
   const filteredRecipes = recipes.filter((recipe) => {
+    // Cuisine filter
     const matchesCuisine = selectedCuisine
-      ? recipe.cuisine === selectedCuisine
+      ? String(recipe?.cuisine || "").trim().toLowerCase() ===
+        String(selectedCuisine).trim().toLowerCase()
       : true;
 
+    // Rating filter - preserve existing behavior
     let matchesRating = true;
 
     if (selectedRating === 4) {
-      matchesRating =
-        Number(recipe.rating) >= 4 &&
-        Number(recipe.rating) < 5;
+      const rating = Number(recipe?.rating);
+      matchesRating = rating >= 4 && rating < 5;
     }
 
     if (selectedRating === 5) {
-      matchesRating =
-        Number(recipe.rating) === 5;
+      matchesRating = Number(recipe?.rating) === 5;
     }
 
-    let matchesType = true;
+    // Category filter
+    const recipeType = getRecipeType(recipe);
 
-    if (selectedType === "Veg") {
-      matchesType = isVegRecipe(recipe.name);
-    }
+    const matchesType =
+      !selectedType || recipeType === selectedType;
 
-    if (selectedType === "Non-veg") {
-      matchesType = !isVegRecipe(recipe.name);
-    }
+    // Search filter
+    const normalizedSearch = String(searchTerm || "")
+      .trim()
+      .toLowerCase();
 
-    const matchesSearchTerm = recipe.name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const matchesSearchTerm = String(recipe?.name || "")
+      .toLowerCase()
+      .includes(normalizedSearch);
 
+    // All active filters must match.
     return (
       matchesCuisine &&
       matchesRating &&
@@ -252,10 +327,7 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-
-        {/* =========================
-            TOP BAR
-        ========================== */}
+        {/* TOP BAR */}
 
         <TopBar
           user={user}
@@ -266,44 +338,60 @@ function App() {
           onSearch={handleSearch}
         />
 
-        {/* =========================
-            PAGE CONTENT
-        ========================== */}
+        {/* PAGE CONTENT */}
 
         <div className="content">
-
           <Routes>
-
-            {/* =========================
-                HOME
-            ========================== */}
+            {/* =========================================
+                HOME PAGE
+            ========================================= */}
 
             <Route
               path="/"
               element={
-                <div className="recipe-grid">
+                <>
+                  <HomeHero
+                    onSearch={handleSearch}
+                    onTypeSelect={handleTypeSelect}
+                  />
 
-                  {filteredRecipes.length === 0 ? (
-                    <p>
-                      Loading recipes...
-                    </p>
-                  ) : (
-                    filteredRecipes.map((recipe) => (
-                      <RecipePanel
-                        key={recipe._id}
-                        recipe={recipe}
-                        isLoggedIn={!!user}
-                      />
-                    ))
-                  )}
+                  {/* RECIPES HEADING AND RECIPE GRID */}
 
-                </div>
+                  <section className="recipes-section">
+                    <h2 className="recipes-heading">
+                      {selectedType
+                        ? `${selectedType} Recipes`
+                        : "Recipes"}
+                    </h2>
+
+                    <div
+                      className="recipe-grid"
+                      id="recipe-results"
+                    >
+                      {filteredRecipes.length === 0 ? (
+                        <p className="no-recipes-message">
+                          {recipes.length === 0
+                            ? "Loading recipes..."
+                            : "No recipes found. Try changing your search or filters."}
+                        </p>
+                      ) : (
+                        filteredRecipes.map((recipe) => (
+                          <RecipePanel
+                            key={recipe._id || recipe.name}
+                            recipe={recipe}
+                            isLoggedIn={!!user}
+                          />
+                        ))
+                      )}
+                    </div>
+                  </section>
+                </>
               }
             />
 
-            {/* =========================
+            {/* =========================================
                 RECIPE DETAILS
-            ========================== */}
+            ========================================= */}
 
             <Route
               path="/recipe/:name"
@@ -317,9 +405,7 @@ function App() {
                         recipeName="Spaghetti Bolognese"
                         user={user}
                         onCancel={() =>
-                          console.log(
-                            "Cancel review"
-                          )
+                          console.log("Cancel review")
                         }
                       />
                     ) : null
@@ -328,33 +414,27 @@ function App() {
               }
             />
 
-            {/* =========================
+            {/* =========================================
                 LOGIN
-            ========================== */}
+            ========================================= */}
 
             <Route
               path="/login"
-              element={
-                <SignIn
-                  onLogin={handleLogin}
-                />
-              }
+              element={<SignIn onLogin={handleLogin} />}
             />
 
-            {/* =========================
+            {/* =========================================
                 SIGN UP
-            ========================== */}
+            ========================================= */}
 
             <Route
               path="/signup"
-              element={
-                <SignUp />
-              }
+              element={<SignUp />}
             />
 
-            {/* =========================
+            {/* =========================================
                 PROFILE
-            ========================== */}
+            ========================================= */}
 
             <Route
               path="/profile"
@@ -369,33 +449,25 @@ function App() {
               }
             />
 
-            {/* =========================
-                ADMIN
-            ========================== */}
+            {/* =========================================
+                ADMIN DASHBOARD
+            ========================================= */}
 
             <Route
               path="/admin"
               element={
-                user?.role === "admin" ? (
+                user?.role?.toLowerCase() === "admin" ? (
                   <AdminDashboard
                     user={user}
-                    onRecipesChanged={
-                      fetchRecipes
-                    }
+                    onRecipesChanged={fetchRecipes}
                   />
                 ) : (
-                  <Navigate
-                    to="/"
-                    replace
-                  />
+                  <Navigate to="/" replace />
                 )
               }
             />
-
           </Routes>
-
         </div>
-
       </div>
     </Router>
   );
