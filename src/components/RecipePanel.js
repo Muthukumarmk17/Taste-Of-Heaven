@@ -472,7 +472,7 @@ useEffect(() => {
       setShowLikeAnimation(true);
       setTimeout(() => {
         setShowLikeAnimation(false);
-      }, 900);
+      }, 1200);
     }
 
     // Update the heart immediately for a responsive UI.
