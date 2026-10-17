@@ -1370,6 +1370,50 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.post("/api/auth/validate-user", async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email is required.",
+      });
+    }
+
+    const user = await User.findOne({ email }).select(
+      "-password -emailVerificationOtpHash -emailVerificationOtpExpires -emailVerificationAttempts"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        valid: false,
+        error: "Account no longer exists.",
+      });
+    }
+
+    if (user.isVerified !== true) {
+      return res.status(403).json({
+        valid: false,
+        error: "Account email is not verified.",
+      });
+    }
+
+    return res.status(200).json({
+      valid: true,
+      user: user.toObject(),
+    });
+  } catch (error) {
+    console.error("Account validation error:", error);
+
+    return res.status(500).json({
+      error: "Unable to validate account.",
+    });
+  }
+});
+
+
 // =====================================================
 // UPDATE PROFILE PICTURE
 // =====================================================

@@ -148,6 +148,74 @@ function App() {
   useEffect(() => {
     fetchRecipes();
   }, []);
+  
+  // VALIDATE SAVED USER WHEN THE APP STARTS
+  useEffect(() => {
+    let cancelled = false;
+
+    const validateSavedUser = async () => {
+      try {
+        const savedUser = localStorage.getItem("user");
+
+        if (!savedUser) return;
+
+        let parsedUser;
+
+        try {
+          parsedUser = JSON.parse(savedUser);
+        } catch {
+          localStorage.removeItem("user");
+          if (!cancelled) setUser(null);
+          return;
+        }
+
+        if (!parsedUser?.email) {
+          localStorage.removeItem("user");
+          if (!cancelled) setUser(null);
+          return;
+        }
+
+        const response = await axios.post(
+          `${API_BASE_URL}/api/auth/validate-user`,
+          { email: parsedUser.email },
+          { withCredentials: true }
+        );
+
+        if (cancelled) return;
+
+        if (response.data?.valid === true && response.data.user) {
+          const updatedUser = response.data.user;
+
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          setUser(updatedUser);
+        } else {
+          localStorage.removeItem("user");
+          setUser(null);
+        }
+      } catch (error) {
+        if (cancelled) return;
+
+        const status = error.response?.status;
+
+        if (status === 404 || status === 403) {
+          // Account was deleted or is no longer verified.
+          localStorage.removeItem("user");
+          setUser(null);
+        } else {
+          // Network/server error: don't log the user out
+          // because account status could not be confirmed.
+          console.error("Could not validate saved account:", error);
+        }
+      }
+    };
+
+    validateSavedUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
 
   // =====================================================
   // SAVE USER TO LOCAL STORAGE
